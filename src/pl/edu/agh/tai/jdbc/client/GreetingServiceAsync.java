@@ -20,4 +20,12 @@ public interface GreetingServiceAsync {
     public void tryLogin(String login, String password, Boolean rememberMe, AsyncCallback<Boolean> callback);
     public void logout(AsyncCallback<Void> callback);
     public void registrate(String name, String surname, String login, String password, AsyncCallback<Void> callback);
+
+	void dropbox(AsyncCallback<Void> callback);
+
+	void getAuthorizationLink(AsyncCallback<String> callback);
+
+	void logOnDropbox(String code, AsyncCallback<String> callback);
+
+	void getFileList(AsyncCallback<String> callback);
 }

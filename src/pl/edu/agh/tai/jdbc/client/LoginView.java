@@ -1,5 +1,9 @@
 package pl.edu.agh.tai.jdbc.client;
 
+
+import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
+
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -35,8 +39,8 @@ public class LoginView implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				greetingService.registrate("Tarasik", "Melon", "taras",
-						"melon", new AsyncCallback<Void>() {
+				greetingService.registrate("Kuba", "Ko³odziej", "aragorn",
+						"tai.2013", new AsyncCallback<Void>() {
 
 							@Override
 							public void onSuccess(Void result) {
@@ -61,29 +65,7 @@ public class LoginView implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				String login = textBox.getText();
 				String password = textBox_1.getText();
-				// greetingService.login(login, password,
-				// new AsyncCallback<Boolean>() {
-				//
-				// @Override
-				// public void onSuccess(Boolean result) {
-				// if (result)
-				// // redirect
-				// MessageBox.info("Success!",
-				// "You have successfully logged in!",
-				// null);
-				// // Window.Location.replace("Logged.html");
-				// // Window.Location.replace("Logged.html");
-				// else
-				// MessageBox.alert("Error!",
-				// "Wrong login or password", null);
-				// }
-				//
-				// @Override
-				// public void onFailure(Throwable caught) {
-				// MessageBox.alert("Error!", caught.getMessage(),
-				// null);
-				// }
-				// });
+			
 
 				greetingService.tryLogin(login, password, false,
 						new AsyncCallback<Boolean>() {
@@ -92,15 +74,22 @@ public class LoginView implements EntryPoint {
 							public void onFailure(Throwable caught) {
 								MessageBox.alert("Error!", caught.getMessage(),
 										null);
+								
 							}
 
 							@Override
 							public void onSuccess(Boolean result) {
-								if (result)
+								if (result){
 									// redirect
-									MessageBox.info("Success!",
-											"You have successfully logged in!",
-											null);
+									RootPanel.get().clear();
+									Info.display("Success!",
+											"You have successfully logged in!");
+									 AuthorizationWindow window = new AuthorizationWindow();
+									 window.show();
+											
+																	
+									
+								}
 								else {
 									MessageBox.alert("Error!",
 											"Wrong login or password", null);
@@ -112,4 +101,39 @@ public class LoginView implements EntryPoint {
 		});
 		rootPanel.add(txtbtnLogin, 221, 213);
 	}
+	
+//	public Window authWindow(){
+//		final Window window = new Window();
+//	//	ContentPanel panel = new ContentPanel();
+//		Button closeButton = new Button("Zamknij");
+//		closeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+//			
+//			@Override
+//			public void componentSelected(ButtonEvent ce) {
+//				window.hide();
+//				
+//			}
+//		});
+//		window.addButton(closeButton);
+//		final TextField<String> field = new TextField<String>();
+//		field.setWidth(630);
+//		field.setTitle("Skopiuj adres do przegl¹darki, a nastêpnie wklej go w pole poni¿ej");
+//		final TextField<String> authorizationCode = new TextField<String>();
+//		window.setWidth(640);
+//		window.add(field);
+//		greetingService.getAuthorizationLink(new AsyncCallback<String>() {
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				Info.display("dupa", "Not works");
+//				
+//			}
+//
+//			@Override
+//			public void onSuccess(String result) {
+//				field.setValue(result);	
+//				}
+//		});
+//		return window;
+//	}
 }

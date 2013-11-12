@@ -21,7 +21,7 @@ public class MySQLAccess {
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:3306/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -56,7 +56,7 @@ public class MySQLAccess {
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:3306/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -88,7 +88,7 @@ public class MySQLAccess {
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:3306/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -195,7 +195,7 @@ public class MySQLAccess {
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:3306/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database

@@ -1,5 +1,6 @@
 package pl.edu.agh.tai.jdbc.client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -20,4 +21,12 @@ public interface GreetingService extends RemoteService {
     public Boolean tryLogin(String login, String password, Boolean rememberMe);
     public void logout();
     public void registrate(String name, String surname, String login, String password);
+
+	void dropbox() throws IOException;
+
+	String getAuthorizationLink();
+
+	String logOnDropbox(String code);
+
+	String getFileList();
 }

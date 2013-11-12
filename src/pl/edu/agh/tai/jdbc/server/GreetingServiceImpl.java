@@ -1,6 +1,10 @@
 package pl.edu.agh.tai.jdbc.server;
 
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -20,7 +24,15 @@ import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
 import pl.edu.agh.tai.jdbc.server.mysql.MySQLAccess;
 import pl.edu.agh.tai.jdbc.shared.FieldVerifier;
+import pl.edu.agh.tai.jdbc.shared.StaticData;
 
+import com.dropbox.core.DbxAppInfo;
+import com.dropbox.core.DbxAuthFinish;
+import com.dropbox.core.DbxClient;
+import com.dropbox.core.DbxEntry;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.DbxWebAuthNoRedirect;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -34,6 +46,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
             .getLogger(GreetingServiceImpl.class);
 
     private org.apache.shiro.subject.Subject currentUser;
+    private DbxClient currentClient;
 
     public GreetingServiceImpl() {
     	//IniSecurityManagerFactory factory = new IniSecurityManagerFactory();
@@ -166,4 +179,114 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		MySQLAccess access = new MySQLAccess();
 		return access.login(login, password);
 	}
+	
+	@Override
+	public String getAuthorizationLink(){
+	      
+	      DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(), StaticData.getAPP_SECRET());
+
+	      DbxRequestConfig config = new DbxRequestConfig(StaticData.getPROJECT_NAME(),
+	      Locale.getDefault().toString());
+	      DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+	      
+	      return webAuth.start();
+	}
+	
+	@Override
+	public String logOnDropbox(String code){
+	      
+	      DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(), StaticData.getAPP_SECRET());
+
+	      DbxRequestConfig config = new DbxRequestConfig(StaticData.getPROJECT_NAME(),
+	      Locale.getDefault().toString());
+	      DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+	      DbxAuthFinish authFinish;		
+				try {
+					authFinish = webAuth.finish(code);
+				    DbxClient client = new DbxClient(config, authFinish.accessToken);
+				    currentClient = client;
+			        return ("Linked account:" + client.getAccountInfo().displayName);
+				} catch (DbxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+
+		   return null;
+	}
+	
+	@Override
+	public String getFileList(){
+		 DbxEntry.WithChildren listing;
+		try {
+			listing = currentClient.getMetadataWithChildren("/TAI");
+			System.out.println("Files in the root path:");
+	        for (DbxEntry child : listing.children) {
+	            System.out.println("	" + child.name + ": " + child.toString());
+	        }
+	       return "Success";
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	        
+	}
+	
+	@Override
+	public void dropbox() throws IOException {
+        // Get your app key and secret from the Dropbox developers website.
+        final String APP_KEY = "apm3dfhibte9645";
+        final String APP_SECRET = "unq7i41xib8rnto";
+
+        DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
+
+        DbxRequestConfig config = new DbxRequestConfig("JavaTutorial/1.0",
+            Locale.getDefault().toString());
+        DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+
+        // Have the user sign in and authorize your app.
+        String authorizeUrl = webAuth.start();
+        System.out.println("1. Go to: " + authorizeUrl);
+        System.out.println("2. Click 'Allow' (you might have to log in first)");
+        System.out.println("3. Copy the authorization code.");
+        String code = "EDitTrVSnqYAAAAAAAAAAYfIl6lsR8rJUR9zQ5dWRiI";
+
+        // This will fail if the user enters an invalid authorization code.
+        DbxAuthFinish authFinish;
+		try {
+			authFinish = webAuth.finish(code);		
+
+	        DbxClient client = new DbxClient(config, authFinish.accessToken);
+	
+	        System.out.println("Linked account: " + client.getAccountInfo().displayName);
+	
+//	        File inputFile = new File("working-draft.txt");
+//	        FileInputStream inputStream = new FileInputStream(inputFile);
+//	        try {
+//	            DbxEntry.File uploadedFile = client.uploadFile("/magnum-opus.txt",
+//	                DbxWriteMode.add(), inputFile.length(), inputStream);
+//	            System.out.println("Uploaded: " + uploadedFile.toString());
+//	        } finally {
+//	            inputStream.close();
+//	        }
+	
+	        DbxEntry.WithChildren listing = client.getMetadataWithChildren("/TAI");
+	        System.out.println("Files in the root path:");
+	        for (DbxEntry child : listing.children) {
+	            System.out.println("	" + child.name + ": " + child.toString());
+	        }
+	
+	        FileOutputStream outputStream = new FileOutputStream("magnum-opus.txt");
+	        try {
+	            DbxEntry.File downloadedFile = client.getFile("/magnum-opus.txt", null,
+	                outputStream);
+	            System.out.println("Metadata: " + downloadedFile.toString());
+	        } finally {
+	            outputStream.close();
+	        }
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 }

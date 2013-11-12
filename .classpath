@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test-classes" path="test"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mysql-connector-java-5.1.27-bin.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/shiro-core-1.2.2.jar"/>
@@ -11,6 +10,11 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-simple-1.7.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-beanutils-1.8.3-javadoc.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-beanutils-1.8.3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GXT"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/gxt"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/gwt-2.5.1"/>
+	<classpathentry kind="lib" path="D:/Studia/VII semestr/TAI/dropbox-java-sdk-1.7.5/lib/dropbox-core-sdk-1.7.5.jar"/>
+	<classpathentry kind="lib" path="D:/Studia/VII semestr/TAI/dropbox-java-sdk-1.7.5/lib/dropbox-core-sdk-1.7.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/Studia/VII semestr/TAI/dropbox-java-sdk-1.7.5/lib/dropbox-core-sdk-1.7.5-sources.jar"/>
+	<classpathentry kind="lib" path="D:/Studia/VII semestr/TAI/dropbox-java-sdk-1.7.5/lib/jackson-core-2.2.3.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
