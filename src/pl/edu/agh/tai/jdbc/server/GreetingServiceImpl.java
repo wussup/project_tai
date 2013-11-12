@@ -1,7 +1,12 @@
 package pl.edu.agh.tai.jdbc.server;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -33,6 +38,7 @@ import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWebAuthNoRedirect;
+import com.dropbox.core.DbxWriteMode;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -47,6 +53,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
     private org.apache.shiro.subject.Subject currentUser;
     private DbxClient currentClient;
+    private User applicationUser;
 
     public GreetingServiceImpl() {
     	//IniSecurityManagerFactory factory = new IniSecurityManagerFactory();
@@ -79,11 +86,13 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
             //We'll use the username/password example here since it is the most common.
             UsernamePasswordToken token = new UsernamePasswordToken(username,password);
              //this is all you have to do to support 'remember me' (no config - built in!):
-            token.setRememberMe(rememberMe);
-
+            token.setRememberMe(rememberMe);            
+            
             try {
                 currentUser.login(token);
                 log.info("User [" + currentUser.getPrincipal().toString() + "] logged in successfully.");
+                MySQLAccess sql = new MySQLAccess();
+                applicationUser = sql.getUserByLogin(username);
                 return true;
             } catch (UnknownAccountException uae) {
                 log.info("There is no user with username of "
@@ -118,7 +127,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
         // iterations and then Base64-encode the value (requires less space than Hex):
         String hashedPasswordBase64 = new Sha256Hash(plainTextPassword, salt,1024).toBase64();
 
-        User user = new User(name, surname, login, hashedPasswordBase64, salt.toString());
+        //TODO pobieraæ z GUI typ
+        User user = new User(name, surname, login, hashedPasswordBase64, salt.toString(), 0);
         this.createUser(user);
     }
 
@@ -216,13 +226,16 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	
 	@Override
 	public String getFileList(){
+			
 		 DbxEntry.WithChildren listing;
 		try {
-			listing = currentClient.getMetadataWithChildren("/TAI");
+			  addFile("A");
+			listing = currentClient.getMetadataWithChildren("/");
 			System.out.println("Files in the root path:");
 	        for (DbxEntry child : listing.children) {
 	            System.out.println("	" + child.name + ": " + child.toString());
 	        }
+	      
 	       return "Success";
 		} catch (DbxException e) {
 			// TODO Auto-generated catch block
@@ -230,6 +243,51 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		}
 		return null;
 	        
+	}
+	
+	@Override
+	public void addFile(String name){
+		try {
+				   String text = "Hapaj dzidke";
+			        File inputFile = new File("hapaj.txt");
+			        BufferedWriter output = new BufferedWriter(new FileWriter(inputFile));
+			        output.write(text);
+			        output.close();
+				    FileInputStream inputStream = new FileInputStream(inputFile);
+			    DbxEntry.File uploadedFile = currentClient.uploadFile("/hapaj.txt",
+		                DbxWriteMode.add(), inputFile.length(), inputStream);
+		            System.out.println("Uploaded: " + uploadedFile.toString());
+		            inputStream.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DbxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+	}
+	
+	private void add(String name)
+	{
+		File inputFile = new File(name);
+        FileInputStream inputStream;
+		try {
+			inputStream = new FileInputStream(inputFile);
+		    DbxEntry.File uploadedFile = currentClient.uploadFile("/"+name,
+	                DbxWriteMode.add(), inputFile.length(), inputStream);
+	            System.out.println("Uploaded: " + uploadedFile.toString());
+	            inputStream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 	}
 	
 	@Override

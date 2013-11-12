@@ -21,6 +21,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class AuthorizationWindow extends Window{
 	private Button closeButton = new Button("Zamknij");
 	private Button logInDropBox = new Button("Dropbox login");
+	private Button addFile = new Button("Dodaj plik");
 	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
 	
@@ -36,8 +37,29 @@ public class AuthorizationWindow extends Window{
 			}
 		});
 		
+		addFile.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				greetingService.addFile("a.txt", new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						Info.display("BANGLA", "Plik zapisano =)");						
+					}
+				});				
+			}
+		});
+		
 		addButton(logInDropBox);
 		addButton(closeButton);
+		addButton(addFile);
 		
 		LabelField label = new LabelField();
 		label.setValue("Dropbox Authorization Link");

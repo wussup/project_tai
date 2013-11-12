@@ -28,4 +28,6 @@ public interface GreetingServiceAsync {
 	void logOnDropbox(String code, AsyncCallback<String> callback);
 
 	void getFileList(AsyncCallback<String> callback);
+
+	void addFile(String name, AsyncCallback<Void> callback);
 }

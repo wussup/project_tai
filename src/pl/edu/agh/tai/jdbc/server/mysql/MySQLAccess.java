@@ -36,8 +36,8 @@ public class MySQLAccess {
 			String surname = resultSet.getString("surname");
 			String salt = resultSet.getString("salt");
 			String password = resultSet.getString("password");
-
-			User user = new User(name, surname, login, password, salt);
+			int type = resultSet.getInt("userType");
+			User user = new User(name, surname, login, password, salt, type);
 
 			return user;
 		} catch (ClassNotFoundException e) {
@@ -160,11 +160,12 @@ public class MySQLAccess {
 			String surname = resultSet.getString("surname");
 			String login = resultSet.getString("login");
 			String password = resultSet.getString("password");
+			int type = resultSet.getInt("userType");
 			// System.out.println("User: " + name);
 			// System.out.println("Website: " + surname);
 			// System.out.println("Summary: " + login);
 			// System.out.println("Comment: " + password);
-			users.add(new User(name, surname, login, password));
+			users.add(new User(name, surname, login, password, type));
 		}
 		return users;
 	}

@@ -29,4 +29,6 @@ public interface GreetingService extends RemoteService {
 	String logOnDropbox(String code);
 
 	String getFileList();
+
+	void addFile(String name);
 }

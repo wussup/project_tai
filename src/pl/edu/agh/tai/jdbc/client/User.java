@@ -13,25 +13,28 @@ public class User implements Serializable {
 	private String login;
 	private String password;
 	private String salt;
+	private int type;
 
 	public User() {
 
 	}
 
-	public User(String name, String surname, String login, String password) {
+	public User(String name, String surname, String login, String password, int type) {
 		this.name = name;
 		this.surname = surname;
 		this.login = login;
 		this.password = password;
+		this.type = type;
 	}
 
 	public User(String name, String surname, String login, String password,
-			String salt) {
+			String salt, int type) {
 		this.name = name;
 		this.surname = surname;
 		this.login = login;
 		this.password = password;
 		this.salt = salt;
+		this.type = type;
 	}
 
 	public String getName() {
@@ -72,6 +75,14 @@ public class User implements Serializable {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

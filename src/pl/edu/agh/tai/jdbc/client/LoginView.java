@@ -5,6 +5,8 @@ import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
 
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,31 +34,7 @@ public class LoginView implements EntryPoint {
 		rootPanel.add(textBox, 159, 131);
 
 		final PasswordTextBox textBox_1 = new PasswordTextBox();
-		rootPanel.add(textBox_1, 159, 167);
-
-		TextButton button = new TextButton("New User");
-		button.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				greetingService.registrate("Kuba", "Ko³odziej", "aragorn",
-						"tai.2013", new AsyncCallback<Void>() {
-
-							@Override
-							public void onSuccess(Void result) {
-								MessageBox.info("Success", "Done", null);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								MessageBox.alert("Error!", caught.getMessage(),
-										null);
-							}
-						});
-			}
-		});
-
-		RootPanel.get().add(button, 0, 0);
+		rootPanel.add(textBox_1, 159, 167);		
 
 		TextButton txtbtnLogin = new TextButton("Login");
 		txtbtnLogin.addClickHandler(new ClickHandler() {
