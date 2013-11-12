@@ -1,6 +1,9 @@
 package pl.edu.agh.tai.jdbc.client;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import pl.edu.agh.tai.jdbc.shared.Invoice;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -27,7 +30,9 @@ public interface GreetingServiceAsync {
 
 	void logOnDropbox(String code, AsyncCallback<String> callback);
 
-	void getFileList(AsyncCallback<String> callback);
+	void getFileList(AsyncCallback<List<Invoice>> callback);
 
 	void addFile(String name, AsyncCallback<Void> callback);
+
+	void getApplicationUser(AsyncCallback<User> callback);
 }

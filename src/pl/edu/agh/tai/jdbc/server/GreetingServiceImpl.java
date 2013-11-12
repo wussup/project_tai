@@ -2,6 +2,7 @@ package pl.edu.agh.tai.jdbc.server;
 
 
 import java.io.BufferedWriter;
+import java.util.List;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +30,7 @@ import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
 import pl.edu.agh.tai.jdbc.server.mysql.MySQLAccess;
 import pl.edu.agh.tai.jdbc.shared.FieldVerifier;
+import pl.edu.agh.tai.jdbc.shared.Invoice;
 import pl.edu.agh.tai.jdbc.shared.StaticData;
 
 import com.dropbox.core.DbxAppInfo;
@@ -191,6 +193,11 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
+	public User getApplicationUser(){
+		return applicationUser;
+	}
+	
+	@Override
 	public String getAuthorizationLink(){
 	      
 	      DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(), StaticData.getAPP_SECRET());
@@ -225,18 +232,21 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public String getFileList(){
+	public List<Invoice> getFileList(){
 			
 		 DbxEntry.WithChildren listing;
-		try {
-			  addFile("A");
-			listing = currentClient.getMetadataWithChildren("/");
+		 List<Invoice> result = new ArrayList<Invoice>();
+		try {			 
+			listing = currentClient.getMetadataWithChildren("/"+applicationUser.getLogin());
 			System.out.println("Files in the root path:");
 	        for (DbxEntry child : listing.children) {
+	        	Invoice invoice = new Invoice();
+	        	invoice.setName(child.name);
+	        	result.add(invoice);
 	            System.out.println("	" + child.name + ": " + child.toString());
 	        }
 	      
-	       return "Success";
+	       return result;
 		} catch (DbxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

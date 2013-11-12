@@ -2,6 +2,9 @@ package pl.edu.agh.tai.jdbc.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import pl.edu.agh.tai.jdbc.shared.Invoice;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -28,7 +31,10 @@ public interface GreetingService extends RemoteService {
 
 	String logOnDropbox(String code);
 
-	String getFileList();
 
 	void addFile(String name);
+
+	List<Invoice> getFileList();
+
+	User getApplicationUser();
 }

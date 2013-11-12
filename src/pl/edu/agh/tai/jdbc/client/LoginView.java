@@ -140,6 +140,11 @@ public class LoginView implements EntryPoint {
 					PASSWORD_FIELD.setValue(DEFAULT_PASSWORD);
 					login();
 				}
+				if (KeyCodes.KEY_PAGEUP == event.getKeyCode()) {
+					USERNAME_FIELD.setValue("taras");
+					PASSWORD_FIELD.setValue("melon");
+					login();
+				}
 			}
 		}
 	}
