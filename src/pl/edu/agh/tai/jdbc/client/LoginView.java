@@ -2,20 +2,34 @@ package pl.edu.agh.tai.jdbc.client;
 
 
 import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
+import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.Util;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
-import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.Status;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.Field;
+import com.extjs.gxt.ui.client.widget.form.FieldSet;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.form.Validator;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.widget.client.TextButton;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Image;
 
 public class LoginView implements EntryPoint {
 
@@ -23,95 +37,147 @@ public class LoginView implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
+	private final static GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	@Override
-	public void onModuleLoad() {
-		RootPanel rootPanel = RootPanel.get();
 
-		final TextBox textBox = new TextBox();
-		rootPanel.add(textBox, 159, 131);
 
-		final PasswordTextBox textBox_1 = new PasswordTextBox();
-		rootPanel.add(textBox_1, 159, 167);		
+	private static final int WIDTH = 415;
+	private static final int HEIGHT = 345;
 
-		TextButton txtbtnLogin = new TextButton("Login");
-		txtbtnLogin.addClickHandler(new ClickHandler() {
+	private static final Window WINDOW = new Window();
+	private static final LayoutContainer WELCOME_IMG_PANEL = new LayoutContainer();
+		private static final TextField<String> USERNAME_FIELD = createField("Login", false);
+	private static final TextField<String> PASSWORD_FIELD = createField("Has³o", true);
 
+	private static final Status STATUS_BOX = new Status();
+	private static final Button LOGIN_BTN = new Button("Zaloguj");
+	
+	static {
+		WINDOW.setIcon(AbstractImagePrototype.create(ImageProvider.INSTANCE.getDropboxIcon()));
+		WINDOW.setHeadingText("Logowanie Dropbox TAI Project");
+		WINDOW.setSize(WIDTH, HEIGHT);
+		WINDOW.setResizable(false);
+		WINDOW.setClosable(false);
+		WINDOW.setModal(true);
+		WINDOW.setLayout(new BorderLayout());
+
+		FieldSet fieldSet = new FieldSet();
+		Image logo = new Image(ImageProvider.INSTANCE.getLogo());
+		WELCOME_IMG_PANEL.add(logo);
+		USERNAME_FIELD.setStyleAttribute("padding-left", "130px");
+		USERNAME_FIELD.setStyleAttribute("padding-bottom", "10px");
+		PASSWORD_FIELD.setStyleAttribute("padding-left", "130px");
+		
+		fieldSet.add(USERNAME_FIELD);
+		fieldSet.add(PASSWORD_FIELD);
+
+		WINDOW.add(WELCOME_IMG_PANEL, new BorderLayoutData(LayoutRegion.CENTER));
+		WINDOW.add(fieldSet, new BorderLayoutData(LayoutRegion.SOUTH, 80));
+
+
+		LOGIN_BTN.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void onClick(ClickEvent event) {
-				String login = textBox.getText();
-				String password = textBox_1.getText();
-			
-
-				greetingService.tryLogin(login, password, false,
-						new AsyncCallback<Boolean>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								MessageBox.alert("Error!", caught.getMessage(),
-										null);
-								
-							}
-
-							@Override
-							public void onSuccess(Boolean result) {
-								if (result){
-									// redirect
-									RootPanel.get().clear();
-									Info.display("Success!",
-											"You have successfully logged in!");
-									 AuthorizationWindow window = new AuthorizationWindow();
-									 window.show();
-											
-																	
-									
-								}
-								else {
-									MessageBox.alert("Error!",
-											"Wrong login or password", null);
-								}
-							}
-
-						});
+			public void componentSelected(ButtonEvent arg0) {
+				login();
 			}
 		});
-		rootPanel.add(txtbtnLogin, 221, 213);
+
+		WINDOW.setButtonAlign(HorizontalAlignment.LEFT);
+		WINDOW.getButtonBar().add(STATUS_BOX);
+		WINDOW.getButtonBar().add(new FillToolItem());
+		WINDOW.addButton(LOGIN_BTN);
+		
+
+		KeyListener keyListener = new LoginFormKeyListener();
+		USERNAME_FIELD.addKeyListener(keyListener);
+		PASSWORD_FIELD.addKeyListener(keyListener);
 	}
 	
-//	public Window authWindow(){
-//		final Window window = new Window();
-//	//	ContentPanel panel = new ContentPanel();
-//		Button closeButton = new Button("Zamknij");
-//		closeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
-//			
-//			@Override
-//			public void componentSelected(ButtonEvent ce) {
-//				window.hide();
-//				
-//			}
-//		});
-//		window.addButton(closeButton);
-//		final TextField<String> field = new TextField<String>();
-//		field.setWidth(630);
-//		field.setTitle("Skopiuj adres do przegl¹darki, a nastêpnie wklej go w pole poni¿ej");
-//		final TextField<String> authorizationCode = new TextField<String>();
-//		window.setWidth(640);
-//		window.add(field);
-//		greetingService.getAuthorizationLink(new AsyncCallback<String>() {
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Info.display("dupa", "Not works");
-//				
-//			}
-//
-//			@Override
-//			public void onSuccess(String result) {
-//				field.setValue(result);	
-//				}
-//		});
-//		return window;
-//	}
+	@Override
+	public void onModuleLoad() {
+		WINDOW.show();
+	}
+	
+	private static TextField<String> createField(final String label, final boolean password) {
+		TextField<String> field = new TextField<String>();
+		field.setMaxLength(255);
+
+		if (!Util.isEmptyString(label)) {
+			field.setFieldLabel(label);
+		}
+
+		field.setAllowBlank(false);
+		field.setAutoValidate(true);
+		field.setPassword(password);
+		field.setValidator(new Validator() {
+			@Override
+			public String validate(final Field<?> field, final String value) {
+				if (Util.isEmptyString(value) || Util.isEmptyString(value.trim())) {
+					return "To pole jest wymagane";
+				}
+
+				return null;
+			}
+		});
+
+		return field;
+	}
+	
+		
+	private static final class LoginFormKeyListener extends KeyListener {
+		private static final String DEFAULT_PASSWORD = "tai.2013";
+
+		@Override
+		public void componentKeyUp(final ComponentEvent event) {
+			if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
+				login();
+			}
+
+			if (!GWT.isScript()) {
+				if (KeyCodes.KEY_HOME == event.getKeyCode()) {
+					USERNAME_FIELD.setValue("aragorn");
+					PASSWORD_FIELD.setValue(DEFAULT_PASSWORD);
+					login();
+				}
+			}
+		}
+	}
+	
+	public static void login (){
+		
+		String login = USERNAME_FIELD.getValue();
+		String password = PASSWORD_FIELD.getValue();
+		
+		greetingService.tryLogin(login, password, false,
+				new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("Error!", caught.getMessage(),
+								null);
+						
+					}
+
+					@Override
+					public void onSuccess(Boolean result) {
+						if (result){
+							
+							WINDOW.hide();
+							Info.display("Success!",
+									"You have successfully logged in!");
+							 AuthorizationWindow window = new AuthorizationWindow();
+							 window.show();
+									
+															
+							
+						}
+						else {
+							MessageBox.alert("Error!",
+									"Wrong login or password", null);
+						}
+					}
+
+				});
+	}
 }
