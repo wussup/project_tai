@@ -33,7 +33,8 @@ public class JDBC_TAI implements EntryPoint {
 			+ "connection and try again.";
 
 	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
+	 * Create a remote service proxy to talk to the server-side Greeting
+	 * service.
 	 */
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
@@ -80,21 +81,20 @@ public class JDBC_TAI implements EntryPoint {
 		dialogBox.setWidget(dialogVPanel);
 
 		greetingService.getUser(new AsyncCallback<ArrayList<User>>() {
-			
+
 			@Override
 			public void onSuccess(ArrayList<User> users) {
-				for (User user: users)
-				{
-					System.out.println(user.getName()+" "+user.getSurname());
+				for (User user : users) {
+					System.out.println(user.getName() + " " + user.getSurname());
 				}
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
 			}
 		});
-		
+
 		// Add a handler to close the DialogBox
 		closeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -123,7 +123,8 @@ public class JDBC_TAI implements EntryPoint {
 			}
 
 			/**
-			 * Send the name from the nameField to the server and wait for a response.
+			 * Send the name from the nameField to the server and wait for a
+			 * response.
 			 */
 			private void sendNameToServer() {
 				// First, we validate the input.

@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client.windows;
 
-
 import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.GreetingServiceAsync;
 import pl.edu.agh.tai.jdbc.client.User;
@@ -19,27 +18,28 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AuthorizationWindow extends Window{
+public class AuthorizationWindow extends Window {
 	private Button closeButton = new Button("Zamknij");
 	private Button logInDropBox = new Button("Dropbox login");
-//	private Button addFile = new Button("Dodaj plik");
-	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+	// private Button addFile = new Button("Dodaj plik");
+	private final GreetingServiceAsync greetingService = GWT
+			.create(GreetingService.class);
 
 	private String userType;
 	private String userLogin;
-	
-	public AuthorizationWindow(){
-		
+
+	public AuthorizationWindow() {
+
 		setLayout(new VBoxLayout(VBoxLayoutAlign.STRETCH));
 		closeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			
+
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				hide();
-				
+
 			}
 		});
-		
+
 		greetingService.getApplicationUser(new AsyncCallback<User>() {
 
 			@Override
@@ -50,42 +50,42 @@ public class AuthorizationWindow extends Window{
 			@Override
 			public void onSuccess(User result) {
 				if (result.getType() == 0) {
-					userType="ADMIN";	
+					userType = "ADMIN";
 				} else {
 					userType = "USER";
 				}
 				userLogin = result.getLogin();
 			}
 		});
-		
-//		addFile.addSelectionListener(new SelectionListener<ButtonEvent>() {
-//
-//			@Override
-//			public void componentSelected(ButtonEvent ce) {
-//				greetingService.addFile("a.txt", new AsyncCallback<Void>() {
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//
-//					@Override
-//					public void onSuccess(Void result) {
-//						Info.display("BANGLA", "Plik zapisano =)");						
-//					}
-//				});				
-//			}
-//		});
-		
+
+		// addFile.addSelectionListener(new SelectionListener<ButtonEvent>() {
+		//
+		// @Override
+		// public void componentSelected(ButtonEvent ce) {
+		// greetingService.addFile("a.txt", new AsyncCallback<Void>() {
+		//
+		// @Override
+		// public void onFailure(Throwable caught) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void onSuccess(Void result) {
+		// Info.display("BANGLA", "Plik zapisano =)");
+		// }
+		// });
+		// }
+		// });
+
 		addButton(logInDropBox);
 		addButton(closeButton);
-//		addButton(addFile);
-		
+		// addButton(addFile);
+
 		LabelField label = new LabelField();
 		label.setValue("Dropbox Authorization Link");
 		label.setStyleAttribute("padding-left", "5px");
-		add (label);
+		add(label);
 		final TextField<String> field = new TextField<String>();
 		field.setStyleAttribute("padding-left", "5px");
 		field.setStyleAttribute("padding-right", "5px");
@@ -97,7 +97,7 @@ public class AuthorizationWindow extends Window{
 		LabelField authLabel = new LabelField();
 		authLabel.setStyleAttribute("padding-left", "5px");
 		authLabel.setValue("Authorization Code");
-		add (authLabel);
+		add(authLabel);
 		final TextField<String> authorizationCode = new TextField<String>();
 		authorizationCode.setWidth(400);
 		authorizationCode.setStyleAttribute("padding-left", "5px");
@@ -105,10 +105,10 @@ public class AuthorizationWindow extends Window{
 		authorizationCode.setStyleAttribute("padding-top", "10px");
 		authorizationCode.setStyleAttribute("padding-bottom", "10px");
 		authorizationCode.setValidator(new Validator() {
-			
+
 			@Override
 			public String validate(Field<?> field, String value) {
-				if (authorizationCode.getValue() == null){
+				if (authorizationCode.getValue() == null) {
 					return "Pole musi zawieraæ kod autoryzacyjny z linku powy¿ej";
 				}
 				return null;
@@ -116,69 +116,69 @@ public class AuthorizationWindow extends Window{
 		});
 		add(authorizationCode);
 		greetingService.getAuthorizationLink(new AsyncCallback<String>() {
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				Info.display("Fail", "Fail in getting Authorization Code");
-				
+
 			}
-	
+
 			@Override
 			public void onSuccess(String result) {
-				field.setValue(result);	
-				}
+				field.setValue(result);
+			}
 		});
-		
-		logInDropBox.addSelectionListener(new SelectionListener<ButtonEvent>() {			
-					
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						if (authorizationCode.getValue() != null){
-							greetingService.logOnDropbox(authorizationCode.getValue(), new AsyncCallback<String>() {
+
+		logInDropBox.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				if (authorizationCode.getValue() != null) {
+					greetingService.logOnDropbox(authorizationCode.getValue(),
+							new AsyncCallback<String>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									Info.display("Error", "Error");									
+									Info.display("Error", "Error");
 								}
 
 								@Override
-								public void onSuccess(String result) { 
-									String [] list = result.split(":");
+								public void onSuccess(String result) {
+									String[] list = result.split(":");
 									Info.display(list[0], list[1]);
-									if (userType.equals("USER")){
+									if (userType.equals("USER")) {
 										FileListWindow window = new FileListWindow();
 										window.show();
 									}
 									hide();
-//									greetingService.getFileList(new AsyncCallback<String>() {
-//
-//										@Override
-//										public void onFailure(Throwable caught) {
-//											// TODO Auto-generated method stub
-//											
-//										}
-//
-//										@Override
-//										public void onSuccess(String result) {
-//											Info.display("OK", "It works");											
-//										}
-//									});
+									// greetingService.getFileList(new
+									// AsyncCallback<String>() {
+									//
+									// @Override
+									// public void onFailure(Throwable caught) {
+									// // TODO Auto-generated method stub
+									//
+									// }
+									//
+									// @Override
+									// public void onSuccess(String result) {
+									// Info.display("OK", "It works");
+									// }
+									// });
 								}
-							});	
-						} else {
-							authorizationCode.validate();
-						}
-					}
+							});
+				} else {
+					authorizationCode.validate();
+				}
+			}
 		});
-	
-		
+
 		setWidth(680);
 		setHeight(195);
 		setResizable(false);
 		setClosable(false);
 		setModal(true);
-		
-		
+
 	}
 
 }

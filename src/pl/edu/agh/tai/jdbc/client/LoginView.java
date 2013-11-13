@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client;
 
-
 import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 
@@ -40,21 +39,22 @@ public class LoginView implements EntryPoint {
 	private final static GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-
-
 	private static final int WIDTH = 415;
 	private static final int HEIGHT = 345;
 
 	private static final Window WINDOW = new Window();
 	private static final LayoutContainer WELCOME_IMG_PANEL = new LayoutContainer();
-		private static final TextField<String> USERNAME_FIELD = createField("Login", false);
-	private static final TextField<String> PASSWORD_FIELD = createField("Has³o", true);
+	private static final TextField<String> USERNAME_FIELD = createField(
+			"Login", false);
+	private static final TextField<String> PASSWORD_FIELD = createField(
+			"Has³o", true);
 
 	private static final Status STATUS_BOX = new Status();
 	private static final Button LOGIN_BTN = new Button("Zaloguj");
-	
+
 	static {
-		WINDOW.setIcon(AbstractImagePrototype.create(ImageProvider.INSTANCE.getDropboxIcon()));
+		WINDOW.setIcon(AbstractImagePrototype.create(ImageProvider.INSTANCE
+				.getDropboxIcon()));
 		WINDOW.setHeadingText("Logowanie Dropbox TAI Project");
 		WINDOW.setSize(WIDTH, HEIGHT);
 		WINDOW.setResizable(false);
@@ -68,13 +68,12 @@ public class LoginView implements EntryPoint {
 		USERNAME_FIELD.setStyleAttribute("padding-left", "130px");
 		USERNAME_FIELD.setStyleAttribute("padding-bottom", "10px");
 		PASSWORD_FIELD.setStyleAttribute("padding-left", "130px");
-		
+
 		fieldSet.add(USERNAME_FIELD);
 		fieldSet.add(PASSWORD_FIELD);
 
 		WINDOW.add(WELCOME_IMG_PANEL, new BorderLayoutData(LayoutRegion.CENTER));
 		WINDOW.add(fieldSet, new BorderLayoutData(LayoutRegion.SOUTH, 80));
-
 
 		LOGIN_BTN.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
@@ -87,19 +86,19 @@ public class LoginView implements EntryPoint {
 		WINDOW.getButtonBar().add(STATUS_BOX);
 		WINDOW.getButtonBar().add(new FillToolItem());
 		WINDOW.addButton(LOGIN_BTN);
-		
 
 		KeyListener keyListener = new LoginFormKeyListener();
 		USERNAME_FIELD.addKeyListener(keyListener);
 		PASSWORD_FIELD.addKeyListener(keyListener);
 	}
-	
+
 	@Override
 	public void onModuleLoad() {
 		WINDOW.show();
 	}
-	
-	private static TextField<String> createField(final String label, final boolean password) {
+
+	private static TextField<String> createField(final String label,
+			final boolean password) {
 		TextField<String> field = new TextField<String>();
 		field.setMaxLength(255);
 
@@ -113,7 +112,8 @@ public class LoginView implements EntryPoint {
 		field.setValidator(new Validator() {
 			@Override
 			public String validate(final Field<?> field, final String value) {
-				if (Util.isEmptyString(value) || Util.isEmptyString(value.trim())) {
+				if (Util.isEmptyString(value)
+						|| Util.isEmptyString(value.trim())) {
 					return "To pole jest wymagane";
 				}
 
@@ -123,8 +123,7 @@ public class LoginView implements EntryPoint {
 
 		return field;
 	}
-	
-		
+
 	private static final class LoginFormKeyListener extends KeyListener {
 		private static final String DEFAULT_PASSWORD = "tai.2013";
 
@@ -148,36 +147,32 @@ public class LoginView implements EntryPoint {
 			}
 		}
 	}
-	
-	public static void login (){
-		
+
+	public static void login() {
+
 		String login = USERNAME_FIELD.getValue();
 		String password = PASSWORD_FIELD.getValue();
-		
+
 		greetingService.tryLogin(login, password, false,
 				new AsyncCallback<Boolean>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageBox.alert("Error!", caught.getMessage(),
-								null);
-						
+						MessageBox.alert("Error!", caught.getMessage(), null);
+
 					}
 
 					@Override
 					public void onSuccess(Boolean result) {
-						if (result){
-							
+						if (result) {
+
 							WINDOW.hide();
 							Info.display("Success!",
 									"You have successfully logged in!");
-							 AuthorizationWindow window = new AuthorizationWindow();
-							 window.show();
-									
-															
-							
-						}
-						else {
+							AuthorizationWindow window = new AuthorizationWindow();
+							window.show();
+
+						} else {
 							MessageBox.alert("Error!",
 									"Wrong login or password", null);
 						}

@@ -1,10 +1,10 @@
 package pl.edu.agh.tai.jdbc.shared;
 
 public final class StaticData {
-	
-	private static String  APP_KEY = "apm3dfhibte9645";
+
+	private static String APP_KEY = "apm3dfhibte9645";
 	private static String APP_SECRET = "unq7i41xib8rnto";
-	private static String PROJECT_NAME ="TAI2013";
+	private static String PROJECT_NAME = "TAI2013";
 
 	public static String getPROJECT_NAME() {
 		return PROJECT_NAME;

@@ -16,13 +16,19 @@ public interface GreetingServiceAsync {
 
 	void getUser(AsyncCallback<ArrayList<User>> callback)
 			throws IllegalArgumentException;
-	
-	void login(String login, String password, AsyncCallback<Boolean> callback) throws IllegalArgumentException;
+
+	void login(String login, String password, AsyncCallback<Boolean> callback)
+			throws IllegalArgumentException;
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
-    public void tryLogin(String login, String password, Boolean rememberMe, AsyncCallback<Boolean> callback);
-    public void logout(AsyncCallback<Void> callback);
-    public void registrate(String name, String surname, String login, String password, AsyncCallback<Void> callback);
+
+	public void tryLogin(String login, String password, Boolean rememberMe,
+			AsyncCallback<Boolean> callback);
+
+	public void logout(AsyncCallback<Void> callback);
+
+	public void registrate(String name, String surname, String login,
+			String password, AsyncCallback<Void> callback);
 
 	void dropbox(AsyncCallback<Void> callback);
 
@@ -35,4 +41,6 @@ public interface GreetingServiceAsync {
 	void addFile(String name, AsyncCallback<Void> callback);
 
 	void getApplicationUser(AsyncCallback<User> callback);
+
+	void downloadFile(String name, AsyncCallback<Boolean> callback);
 }

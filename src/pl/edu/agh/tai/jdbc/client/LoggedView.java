@@ -6,7 +6,7 @@ public class LoggedView implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		
+
 	}
 
 }
