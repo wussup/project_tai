@@ -15,13 +15,15 @@ public class MySQLAccess {
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
+	private static String PORT = "3306";
+	
 	public User getUserByLogin(String login) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -56,7 +58,7 @@ public class MySQLAccess {
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -88,7 +90,7 @@ public class MySQLAccess {
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database
@@ -196,7 +198,7 @@ public class MySQLAccess {
 
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:3307/tai?"
+					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
 							+ "user=root");
 
 			// Statements allow to issue SQL queries to the database

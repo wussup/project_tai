@@ -29,11 +29,7 @@ public interface GreetingService extends RemoteService {
 	public void registrate(String name, String surname, String login,
 			String password);
 
-	void dropbox() throws IOException;
-
 	String getAuthorizationLink();
-
-	String logOnDropbox(String code);
 
 	void addFile(String name);
 
@@ -42,4 +38,9 @@ public interface GreetingService extends RemoteService {
 	User getApplicationUser();
 
 	boolean downloadFile(String name);
+	
+	String logOnDropbox();
+
+
+	List<Invoice> getAdminFileList(String folderName);
 }

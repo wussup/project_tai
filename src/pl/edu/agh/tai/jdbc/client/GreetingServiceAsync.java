@@ -30,11 +30,9 @@ public interface GreetingServiceAsync {
 	public void registrate(String name, String surname, String login,
 			String password, AsyncCallback<Void> callback);
 
-	void dropbox(AsyncCallback<Void> callback);
-
 	void getAuthorizationLink(AsyncCallback<String> callback);
 
-	void logOnDropbox(String code, AsyncCallback<String> callback);
+	void logOnDropbox(AsyncCallback<String> callback);
 
 	void getFileList(AsyncCallback<List<Invoice>> callback);
 
@@ -43,4 +41,7 @@ public interface GreetingServiceAsync {
 	void getApplicationUser(AsyncCallback<User> callback);
 
 	void downloadFile(String name, AsyncCallback<Boolean> callback);
+
+	void getAdminFileList(String folderName,
+			AsyncCallback<List<Invoice>> callback);
 }

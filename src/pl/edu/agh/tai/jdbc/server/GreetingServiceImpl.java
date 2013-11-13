@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,6 +42,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWebAuthNoRedirect;
 import com.dropbox.core.DbxWriteMode;
+import com.google.gwt.user.client.rpc.core.java.util.Collections;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -49,6 +52,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
 	private static final long serialVersionUID = -4051026136441981243L;
+	private static final String token = "G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt";
 	private static final transient Logger log = LoggerFactory
 			.getLogger(GreetingServiceImpl.class);
 
@@ -224,18 +228,11 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String logOnDropbox(String code) {
-
-		DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(),
-				StaticData.getAPP_SECRET());
-
+	public String logOnDropbox() {
 		DbxRequestConfig config = new DbxRequestConfig(
 				StaticData.getPROJECT_NAME(), Locale.getDefault().toString());
-		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
-		DbxAuthFinish authFinish;
-		try {
-			authFinish = webAuth.finish(code);
-			DbxClient client = new DbxClient(config, authFinish.accessToken);
+		try {			
+			DbxClient client = new DbxClient(config, token);
 			currentClient = client;
 			return ("Linked account:" + client.getAccountInfo().displayName);
 		} catch (DbxException e) {
@@ -260,8 +257,52 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 				invoice.setName(child.name);
 				result.add(invoice);
 				System.out.println("	" + child.name + ": " + child.toString());
+				System.out.println("ŒCIEZKA --->" + child.path);
 			}
 
+			return result;
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	@Override
+	public List<Invoice> getAdminFileList(String folderName) {
+
+		DbxEntry.WithChildren listing;
+		List<Invoice> result = new ArrayList<Invoice>();
+		try {
+			if (folderName == null){
+				listing = currentClient.getMetadataWithChildren("/");
+			} else {
+				listing = currentClient.getMetadataWithChildren("/"+folderName);
+			}
+			System.out.println("Files in the root path:");
+			for (DbxEntry child : listing.children) {
+				Invoice invoice = new Invoice();
+				invoice.setName(child.name);
+				invoice.setDir(child.isFolder());
+				result.add(invoice);
+				System.out.println("	" + child.name + ": " + child.toString());
+				System.out.println("ŒCIEZKA --->" + child.path);
+			}
+
+			java.util.Collections.sort(result, new Comparator<Invoice>() {
+
+				@Override
+				public int compare(Invoice o1, Invoice o2) {
+					if (o1.isDir() && !o2.isDir())
+						return -1;
+					else if (o2.isDir() && !o1.isDir())
+						return 1;
+					else
+						return 0;
+				}
+			});
+			
 			return result;
 		} catch (DbxException e) {
 			// TODO Auto-generated catch block
@@ -296,77 +337,28 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public void dropbox() throws IOException {
-		// Get your app key and secret from the Dropbox developers website.
-		final String APP_KEY = "apm3dfhibte9645";
-		final String APP_SECRET = "unq7i41xib8rnto";
-
-		DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
-
-		DbxRequestConfig config = new DbxRequestConfig("JavaTutorial/1.0",
-				Locale.getDefault().toString());
-		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
-
-		// Have the user sign in and authorize your app.
-		String authorizeUrl = webAuth.start();
-		System.out.println("1. Go to: " + authorizeUrl);
-		System.out.println("2. Click 'Allow' (you might have to log in first)");
-		System.out.println("3. Copy the authorization code.");
-		String code = "EDitTrVSnqYAAAAAAAAAAYfIl6lsR8rJUR9zQ5dWRiI";
-
-		// This will fail if the user enters an invalid authorization code.
-		DbxAuthFinish authFinish;
-		try {
-			authFinish = webAuth.finish(code);
-
-			DbxClient client = new DbxClient(config, authFinish.accessToken);
-
-			System.out.println("Linked account: "
-					+ client.getAccountInfo().displayName);
-
-			// File inputFile = new File("working-draft.txt");
-			// FileInputStream inputStream = new FileInputStream(inputFile);
-			// try {
-			// DbxEntry.File uploadedFile =
-			// client.uploadFile("/magnum-opus.txt",
-			// DbxWriteMode.add(), inputFile.length(), inputStream);
-			// System.out.println("Uploaded: " + uploadedFile.toString());
-			// } finally {
-			// inputStream.close();
-			// }
-
-			DbxEntry.WithChildren listing = client
-					.getMetadataWithChildren("/TAI");
-			System.out.println("Files in the root path:");
-			for (DbxEntry child : listing.children) {
-				System.out.println("	" + child.name + ": " + child.toString());
-			}
-
-			FileOutputStream outputStream = new FileOutputStream(
-					"magnum-opus.txt");
-			try {
-				DbxEntry.File downloadedFile = client.getFile(
-						"/magnum-opus.txt", null, outputStream);
-				System.out.println("Metadata: " + downloadedFile.toString());
-			} finally {
-				outputStream.close();
-			}
-		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public boolean downloadFile(String name) {
 		FileOutputStream outputStream = null;
 		try {
-			outputStream = new FileOutputStream(name);
+			
+			File dir = new File("C:\\invoices");
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			
+			outputStream = new FileOutputStream("C:\\invoices\\"+name);
 			DbxEntry.File downloadedFile;
+			
+			
+			
 			downloadedFile = currentClient.getFile(
 					"/" + applicationUser.getLogin() + "/" + name, null,
 					outputStream);
+			
+			System.out.println(downloadedFile.Reader.toString());
+			
 			System.out.println("Metadata: " + downloadedFile.toString());
 			return true;
 		} catch (FileNotFoundException e) {
@@ -382,4 +374,5 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		}
 		return false;
 	}
+
 }

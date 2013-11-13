@@ -1,6 +1,6 @@
 package pl.edu.agh.tai.jdbc.client;
 
-import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
+import pl.edu.agh.tai.jdbc.client.windows.FileListWindow;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -169,8 +169,35 @@ public class LoginView implements EntryPoint {
 							WINDOW.hide();
 							Info.display("Success!",
 									"You have successfully logged in!");
-							AuthorizationWindow window = new AuthorizationWindow();
-							window.show();
+							greetingService.logOnDropbox(new AsyncCallback<String>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+									
+								}
+
+								@Override
+								public void onSuccess(String result) {
+									String[] splitted = result.split(":");
+									Info.display(splitted[0], splitted[1]);
+									greetingService.getApplicationUser(new AsyncCallback<User>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+											// TODO Auto-generated method stub
+											
+										}
+
+										@Override
+										public void onSuccess(User result) {
+											FileListWindow fileWindow = new FileListWindow(result.getType());
+											fileWindow.show();											
+											
+										}
+									});
+								}
+							});
 
 						} else {
 							MessageBox.alert("Error!",
@@ -179,5 +206,9 @@ public class LoginView implements EntryPoint {
 					}
 
 				});
+	}
+	
+	public void showWindow(){
+		WINDOW.show();
 	}
 }
