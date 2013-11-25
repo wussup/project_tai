@@ -43,4 +43,6 @@ public interface GreetingService extends RemoteService {
 
 
 	List<Invoice> getAdminFileList(String folderName);
+
+	List<String> getUsersNames() throws Exception;
 }

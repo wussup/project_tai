@@ -44,4 +44,6 @@ public interface GreetingServiceAsync {
 
 	void getAdminFileList(String folderName,
 			AsyncCallback<List<Invoice>> callback);
+
+	void getUsersNames(AsyncCallback<List<String>> callback);
 }

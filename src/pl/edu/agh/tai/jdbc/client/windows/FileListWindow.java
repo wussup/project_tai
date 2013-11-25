@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client.windows;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import pl.edu.agh.tai.jdbc.shared.Invoice;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
-import com.extjs.gxt.ui.client.data.Loader;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -35,9 +33,12 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class FileListWindow extends Window {
 
-	private Button closeButton = new Button("Wyloguj");
+	private Button logoutButton = new Button("Wyloguj", AbstractImagePrototype.create(ImageProvider.INSTANCE.getLogoutIcon()));
 	private Button downloadButton = new Button("Download File",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getFooIcon()));
+	
+	private Button creteInvoice = new Button ("Create new Invoice", 
+			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	private Grid<ModelData> grid;
@@ -51,9 +52,16 @@ public class FileListWindow extends Window {
 	public FileListWindow(final int type) {
 		setWidth(400);
 		setHeight(300);
+		setOnEsc(false);
+		setClosable(false);
+		setModal(true);
+		setResizable(false);
 
 		ToolBar toolbar = new ToolBar();
 		toolbar.setHeight(25);
+		if (type == 0){
+			toolbar.add(creteInvoice);
+		}
 		FillToolItem item = new FillToolItem();
 		toolbar.add(item);
 		toolbar.add(downloadButton);
@@ -83,6 +91,19 @@ public class FileListWindow extends Window {
 						}
 					}
 				});
+		
+		creteInvoice.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				try {
+					new InvoiceWindow().show();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
+			}
+		});
+		
 		setTopComponent(toolbar);
 
 		if (type == 1) {
@@ -137,7 +158,7 @@ public class FileListWindow extends Window {
 				});
 
 		add(grid);
-		closeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+		logoutButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -160,7 +181,7 @@ public class FileListWindow extends Window {
 				});
 			}
 		});
-		addButton(closeButton);
+		addButton(logoutButton);
 
 	}
 

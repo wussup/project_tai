@@ -94,7 +94,37 @@ public class LoginView implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		WINDOW.show();
+		
+		greetingService.isLoggedIn(new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				if (result == true){
+					greetingService.getApplicationUser(new AsyncCallback<User>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void onSuccess(User result) {
+							FileListWindow fileWindow = new FileListWindow(result.getType());
+							fileWindow.show();								
+						}
+					});
+				} else {
+					WINDOW.show();
+				}
+			}
+		});
 	}
 
 	private static TextField<String> createField(final String label,

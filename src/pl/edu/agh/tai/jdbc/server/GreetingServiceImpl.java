@@ -122,6 +122,18 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 		return false;
 	}
+	
+	@Override
+	public List<String> getUsersNames() throws Exception{
+		MySQLAccess sql = new MySQLAccess();
+		List <String> names = new ArrayList<String>();
+		for (User user : sql.readDataBase()){
+			names.add(user.toString());
+		}
+		
+		return names;
+		
+	}
 
 	@Override
 	public void logout() {
