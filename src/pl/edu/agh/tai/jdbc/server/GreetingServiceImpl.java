@@ -59,7 +59,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	private User applicationUser;
 
 	public GreetingServiceImpl() {
-		// IniSecurityManagerFactory factory = new IniSecurityManagerFactory();
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory
 				.getInstance();
@@ -151,7 +150,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		String hashedPasswordBase64 = new Sha256Hash(plainTextPassword, salt,
 				1024).toBase64();
 
-		// TODO pobiera� z GUI typ
+		// TODO pobierac z GUI typ
 		User user = new User(name, surname, login, hashedPasswordBase64,
 				salt.toString(), 0);
 		this.createUser(user);
@@ -249,13 +248,10 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 				currentClient = client;
 				return ("Linked account:" + client.getAccountInfo().displayName);
-			}
-			else
-			{
-				//TODO: Dorobic funkcje createTokenCosTam
+			} else {
+				// TODO: Dorobic funkcje createTokenCosTam
 			}
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -281,7 +277,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 			return result;
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -325,7 +320,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 			return result;
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -347,10 +341,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 			System.out.println("Uploaded: " + uploadedFile.toString());
 			inputStream.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -374,7 +366,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 					"/" + applicationUser.getLogin() + "/" + name, null,
 					outputStream);
 
-			System.out.println(downloadedFile.Reader.toString());
+			System.out
+					.println(com.dropbox.core.DbxEntry.File.Reader.toString());
 
 			System.out.println("Metadata: " + downloadedFile.toString());
 			return true;

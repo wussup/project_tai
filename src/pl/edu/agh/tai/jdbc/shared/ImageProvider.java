@@ -16,13 +16,13 @@ public interface ImageProvider extends ClientBundle {
 
 	@Source("img/logo.png")
 	ImageResource getLogo();
-	
+
 	@Source("img/plusIcon.gif")
 	ImageResource getPlusIcon();
-	
+
 	@Source("img/saveIcon.gif")
 	ImageResource getSaveIcon();
-	
+
 	@Source("img/closeIcon.gif")
 	ImageResource getCloseIcon();
 

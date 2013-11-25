@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String surname;
@@ -85,8 +82,8 @@ public class User implements Serializable {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return login + " | " + name + " " + surname;
 	}
 

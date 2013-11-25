@@ -47,7 +47,7 @@ public class LoginView implements EntryPoint {
 	private static final TextField<String> USERNAME_FIELD = createField(
 			"Login", false);
 	private static final TextField<String> PASSWORD_FIELD = createField(
-			"Has³o", true);
+			"Hasï¿½o", true);
 
 	private static final Status STATUS_BOX = new Status();
 	private static final Button LOGIN_BTN = new Button("Zaloguj");
@@ -94,32 +94,37 @@ public class LoginView implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		
+
 		greetingService.isLoggedIn(new AsyncCallback<Boolean>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				MessageBox.alert("Error!",
+						"Sorry, but error is occured in isLoggedIn method!",
+						null);
 			}
 
 			@Override
 			public void onSuccess(Boolean result) {
-				if (result == true){
-					greetingService.getApplicationUser(new AsyncCallback<User>() {
+				if (result == true) {
+					greetingService
+							.getApplicationUser(new AsyncCallback<User>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
-							
-						}
+								@Override
+								public void onFailure(Throwable caught) {
+									MessageBox
+											.alert("Error!",
+													"Sorry, but error is occured in getApplicationUser method!",
+													null);
+								}
 
-						@Override
-						public void onSuccess(User result) {
-							FileListWindow fileWindow = new FileListWindow(result.getType());
-							fileWindow.show();								
-						}
-					});
+								@Override
+								public void onSuccess(User result) {
+									FileListWindow fileWindow = new FileListWindow(
+											result.getType());
+									fileWindow.show();
+								}
+							});
 				} else {
 					WINDOW.show();
 				}
@@ -199,35 +204,46 @@ public class LoginView implements EntryPoint {
 							WINDOW.hide();
 							Info.display("Success!",
 									"You have successfully logged in!");
-							greetingService.logOnDropbox(new AsyncCallback<String>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									// TODO Auto-generated method stub
-									
-								}
-
-								@Override
-								public void onSuccess(String result) {
-									String[] splitted = result.split(":");
-									Info.display(splitted[0], splitted[1]);
-									greetingService.getApplicationUser(new AsyncCallback<User>() {
+							greetingService
+									.logOnDropbox(new AsyncCallback<String>() {
 
 										@Override
 										public void onFailure(Throwable caught) {
-											// TODO Auto-generated method stub
-											
+											MessageBox
+													.alert("Error!",
+															"Sorry, but error is occured in logOnDropbox method!",
+															null);
 										}
 
 										@Override
-										public void onSuccess(User result) {
-											FileListWindow fileWindow = new FileListWindow(result.getType());
-											fileWindow.show();											
-											
+										public void onSuccess(String result) {
+											String[] splitted = result
+													.split(":");
+											Info.display(splitted[0],
+													splitted[1]);
+											greetingService
+													.getApplicationUser(new AsyncCallback<User>() {
+
+														@Override
+														public void onFailure(
+																Throwable caught) {
+															MessageBox
+																	.alert("Error!",
+																			"Sorry, but error is occured in getApplicationUser method!",
+																			null);
+														}
+
+														@Override
+														public void onSuccess(
+																User result) {
+															FileListWindow fileWindow = new FileListWindow(
+																	result.getType());
+															fileWindow.show();
+
+														}
+													});
 										}
 									});
-								}
-							});
 
 						} else {
 							MessageBox.alert("Error!",
@@ -237,8 +253,8 @@ public class LoginView implements EntryPoint {
 
 				});
 	}
-	
-	public void showWindow(){
+
+	public void showWindow() {
 		WINDOW.show();
 	}
 }

@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +13,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("greet")
 public interface GreetingService extends RemoteService {
-	String greetServer(String name) throws IllegalArgumentException;
+	public String greetServer(String name) throws IllegalArgumentException;
 
-	ArrayList<User> getUser();
+	public ArrayList<User> getUser();
 
-	boolean login(String login, String password);
+	public boolean login(String login, String password);
 
 	public Boolean isLoggedIn();
 
@@ -29,20 +28,19 @@ public interface GreetingService extends RemoteService {
 	public void registrate(String name, String surname, String login,
 			String password);
 
-	String getAuthorizationLink();
+	public String getAuthorizationLink();
 
-	void addFile(String name);
+	public void addFile(String name);
 
-	List<Invoice> getFileList();
+	public List<Invoice> getFileList();
 
-	User getApplicationUser();
+	public User getApplicationUser();
 
-	boolean downloadFile(String name);
-	
-	String logOnDropbox();
+	public boolean downloadFile(String name);
 
+	public String logOnDropbox();
 
-	List<Invoice> getAdminFileList(String folderName);
+	public List<Invoice> getAdminFileList(String folderName);
 
-	List<String> getUsersNames() throws Exception;
+	public List<String> getUsersNames() throws Exception;
 }

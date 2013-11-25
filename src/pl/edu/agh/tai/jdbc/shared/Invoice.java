@@ -39,6 +39,4 @@ public class Invoice extends BaseModel implements Serializable {
 		set("isDir", isDir);
 	}
 
-	
-	
 }

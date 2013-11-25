@@ -7,8 +7,8 @@ import pl.edu.agh.tai.jdbc.client.GreetingServiceAsync;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.EventType;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
@@ -23,51 +23,53 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class InvoiceWindow extends Window{
-	
+public class InvoiceWindow extends Window {
+
 	private SimpleComboBox<String> loginCombo = new SimpleComboBox<String>();
 	private TextField<Integer> value = new TextField<Integer>();
 	private TextField<String> name = new TextField<String>();
-	private Button save = new Button("Save", 
+	private Button save = new Button("Save",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getSaveIcon()));
-	private Button close = new Button ("Close", 
+	private Button close = new Button(
+			"Close",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getCloseIcon()));
 	private FieldSet set = new FieldSet();
-	private LabelField label1 = new LabelField();
-	private LabelField label2 = new LabelField();
-	private LabelField label3 = new LabelField();
-	
+	private LabelField userLabel = new LabelField();
+	private LabelField invoiceValueLabel = new LabelField();
+	private LabelField invoiceFileNamelabel = new LabelField();
+
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
-	
-	public InvoiceWindow() throws Exception{
+
+	public InvoiceWindow() throws Exception {
 		setWidth(250);
 		setHeight(250);
 		setOnEsc(false);
 		setClosable(false);
 		setModal(true);
 		setResizable(false);
-		
+
 		VBoxLayout layout = new VBoxLayout(VBoxLayoutAlign.STRETCH);
 		setLayout(layout);
-		
+
 		greetingService.getUsersNames(new AsyncCallback<List<String>>() {
-			
+
 			@Override
 			public void onSuccess(List<String> result) {
-				loginCombo.add(result);				
+				loginCombo.add(result);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				MessageBox.alert("Error!",
+						"Sorry, but error is occured in getUsersNames method!",
+						null);
 			}
 		});
-		
-		label1.setValue("User");
-		label2.setValue("Invoice value");
-		label3.setValue("Invoice file name");
+
+		userLabel.setValue("User");
+		invoiceValueLabel.setValue("Invoice value");
+		invoiceFileNamelabel.setValue("Invoice file name");
 		loginCombo.setFieldLabel("User");
 		loginCombo.setHideLabel(false);
 		value.setFieldLabel("Invoice value");
@@ -79,21 +81,21 @@ public class InvoiceWindow extends Window{
 		HBoxLayout setLayout = new HBoxLayout();
 		setLayout.setHBoxLayoutAlign(HBoxLayoutAlign.STRETCH);
 		set.setHeadingHtml("Set invoice data");
-		set.add(label1);
+		set.add(userLabel);
 		set.add(loginCombo);
-		set.add(label2);
+		set.add(invoiceValueLabel);
 		set.add(value);
-		set.add(label3);
+		set.add(invoiceFileNamelabel);
 		set.add(name);
-		add (set);
+		add(set);
 		addButtonListeners();
 		addButton(save);
 		addButton(close);
 	}
-	
-	private void addButtonListeners(){
+
+	private void addButtonListeners() {
 		close.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			
+
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				hide();

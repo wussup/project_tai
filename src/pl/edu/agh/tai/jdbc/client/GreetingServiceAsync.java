@@ -11,14 +11,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface GreetingServiceAsync {
-	void greetServer(String input, AsyncCallback<String> callback)
+	public void greetServer(String input, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
-	void getUser(AsyncCallback<ArrayList<User>> callback)
+	public void getUser(AsyncCallback<ArrayList<User>> callback)
 			throws IllegalArgumentException;
 
-	void login(String login, String password, AsyncCallback<Boolean> callback)
-			throws IllegalArgumentException;
+	public void login(String login, String password,
+			AsyncCallback<Boolean> callback) throws IllegalArgumentException;
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
 
@@ -30,20 +30,20 @@ public interface GreetingServiceAsync {
 	public void registrate(String name, String surname, String login,
 			String password, AsyncCallback<Void> callback);
 
-	void getAuthorizationLink(AsyncCallback<String> callback);
+	public void getAuthorizationLink(AsyncCallback<String> callback);
 
-	void logOnDropbox(AsyncCallback<String> callback);
+	public void logOnDropbox(AsyncCallback<String> callback);
 
-	void getFileList(AsyncCallback<List<Invoice>> callback);
+	public void getFileList(AsyncCallback<List<Invoice>> callback);
 
-	void addFile(String name, AsyncCallback<Void> callback);
+	public void addFile(String name, AsyncCallback<Void> callback);
 
-	void getApplicationUser(AsyncCallback<User> callback);
+	public void getApplicationUser(AsyncCallback<User> callback);
 
-	void downloadFile(String name, AsyncCallback<Boolean> callback);
+	public void downloadFile(String name, AsyncCallback<Boolean> callback);
 
-	void getAdminFileList(String folderName,
+	public void getAdminFileList(String folderName,
 			AsyncCallback<List<Invoice>> callback);
 
-	void getUsersNames(AsyncCallback<List<String>> callback);
+	public void getUsersNames(AsyncCallback<List<String>> callback);
 }

@@ -7,8 +7,7 @@
 	<!-- Servlets -->
 	<servlet>
 		<servlet-name>greetServlet</servlet-name>
-		<servlet-class>pl.edu.agh.tai.jdbc.server.GreetingServiceImpl
-		</servlet-class>
+		<servlet-class>pl.edu.agh.tai.jdbc.server.GreetingServiceImpl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -21,10 +20,9 @@
 		<welcome-file>JDBC_TAI.html</welcome-file>
 	</welcome-file-list>
 
-	<!-- Apache Shero -->
+	<!-- Apache Shiro -->
 	<listener>
-		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener
-		</listener-class>
+		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
 	<filter>
 		<filter-name>ShiroFilter</filter-name>

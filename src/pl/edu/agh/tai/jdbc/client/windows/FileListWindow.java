@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -33,11 +34,13 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class FileListWindow extends Window {
 
-	private Button logoutButton = new Button("Wyloguj", AbstractImagePrototype.create(ImageProvider.INSTANCE.getLogoutIcon()));
+	private Button logoutButton = new Button("Logout",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE
+					.getLogoutIcon()));
 	private Button downloadButton = new Button("Download File",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getFooIcon()));
-	
-	private Button creteInvoice = new Button ("Create new Invoice", 
+
+	private Button createInvoice = new Button("Create new Invoice",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
@@ -46,7 +49,7 @@ public class FileListWindow extends Window {
 	private final ListLoader<ListLoadResult<Invoice>> loader;
 	private final ListStore<ModelData> itemStore;
 	private RpcProxy<List<Invoice>> proxy;
-	
+
 	private String folder = null;
 
 	public FileListWindow(final int type) {
@@ -59,8 +62,8 @@ public class FileListWindow extends Window {
 
 		ToolBar toolbar = new ToolBar();
 		toolbar.setHeight(25);
-		if (type == 0){
-			toolbar.add(creteInvoice);
+		if (type == 0) {
+			toolbar.add(createInvoice);
 		}
 		FillToolItem item = new FillToolItem();
 		toolbar.add(item);
@@ -77,8 +80,10 @@ public class FileListWindow extends Window {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									// TODO Auto-generated method stub
-
+									MessageBox
+											.alert("Error!",
+													"Sorry, but error is occured in downloadFile method!",
+													null);
 								}
 
 								@Override
@@ -91,19 +96,20 @@ public class FileListWindow extends Window {
 						}
 					}
 				});
-		
-		creteInvoice.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				try {
-					new InvoiceWindow().show();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}				
-			}
-		});
-		
+		createInvoice
+				.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+					@Override
+					public void componentSelected(ButtonEvent ce) {
+						try {
+							new InvoiceWindow().show();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+
 		setTopComponent(toolbar);
 
 		if (type == 1) {
@@ -137,7 +143,6 @@ public class FileListWindow extends Window {
 		itemStore.getLoader().load();
 		grid = new Grid<ModelData>(itemStore, cm);
 		grid.setHeight(205);
-//		grid.setLoadMask(true);
 
 		grid.getSelectionModel().addSelectionChangedListener(
 				new SelectionChangedListener<ModelData>() {
@@ -146,10 +151,11 @@ public class FileListWindow extends Window {
 					public void selectionChanged(
 							final SelectionChangedEvent<ModelData> se) {
 						if (type == 0) {
-							boolean isDir = ((Invoice) se.getSelectedItem()).isDir();
-							if (isDir)
-							{
-								folder = se.getSelectedItem().get("name").toString();
+							boolean isDir = ((Invoice) se.getSelectedItem())
+									.isDir();
+							if (isDir) {
+								folder = se.getSelectedItem().get("name")
+										.toString();
 								itemStore.getLoader().load();
 								grid.repaint();
 							}
@@ -167,8 +173,10 @@ public class FileListWindow extends Window {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-
+						MessageBox
+								.alert("Error!",
+										"Sorry, but error is occured in logout method!",
+										null);
 					}
 
 					@Override
