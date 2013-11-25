@@ -52,7 +52,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
 	private static final long serialVersionUID = -4051026136441981243L;
-	private static final String token = "G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt";
+	//private static final String token = "G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt";
 	private static final transient Logger log = LoggerFactory
 			.getLogger(GreetingServiceImpl.class);
 
@@ -153,7 +153,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		String hashedPasswordBase64 = new Sha256Hash(plainTextPassword, salt,
 				1024).toBase64();
 
-		// TODO pobieraæ z GUI typ
+		// TODO pobieraï¿½ z GUI typ
 		User user = new User(name, surname, login, hashedPasswordBase64,
 				salt.toString(), 0);
 		this.createUser(user);
@@ -244,9 +244,15 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		DbxRequestConfig config = new DbxRequestConfig(
 				StaticData.getPROJECT_NAME(), Locale.getDefault().toString());
 		try {			
-			DbxClient client = new DbxClient(config, token);
-			currentClient = client;
-			return ("Linked account:" + client.getAccountInfo().displayName);
+			MySQLAccess sql = new MySQLAccess();
+			String token = sql.getDropboxToken();
+			if (token !=null)
+			{
+				DbxClient client = new DbxClient(config, token);
+				
+				currentClient = client;
+				return ("Linked account:" + client.getAccountInfo().displayName);
+			}
 		} catch (DbxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -269,7 +275,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 				invoice.setName(child.name);
 				result.add(invoice);
 				System.out.println("	" + child.name + ": " + child.toString());
-				System.out.println("ŒCIEZKA --->" + child.path);
+				System.out.println("ï¿½CIEZKA --->" + child.path);
 			}
 
 			return result;
@@ -299,7 +305,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 				invoice.setDir(child.isFolder());
 				result.add(invoice);
 				System.out.println("	" + child.name + ": " + child.toString());
-				System.out.println("ŒCIEZKA --->" + child.path);
+				System.out.println("ï¿½CIEZKA --->" + child.path);
 			}
 
 			java.util.Collections.sort(result, new Comparator<Invoice>() {

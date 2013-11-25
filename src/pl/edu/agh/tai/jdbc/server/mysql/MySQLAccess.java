@@ -15,16 +15,15 @@ public class MySQLAccess {
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-	private static String PORT = "3306";
-	
+	private static String PORT = "3307";
+
 	public User getUserByLogin(String login) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// Setup the connection with the DB
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
-							+ "user=root");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
 
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
@@ -57,9 +56,8 @@ public class MySQLAccess {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// Setup the connection with the DB
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
-							+ "user=root");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
 
 			// Statements allow to issue SQL queries to the database
 			// statement = connect.createStatement();
@@ -89,9 +87,8 @@ public class MySQLAccess {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
-							+ "user=root");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
 
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
@@ -197,9 +194,8 @@ public class MySQLAccess {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// Setup the connection with the DB
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost:"+PORT+"/tai?"
-							+ "user=root");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
 
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
@@ -217,6 +213,31 @@ public class MySQLAccess {
 			close();
 		}
 		return false;
+	}
+
+	public String getDropboxToken() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// Setup the connection with the DB
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
+
+			// Statements allow to issue SQL queries to the database
+			statement = connect.createStatement();
+			// Result set get the result of the SQL query
+			resultSet = statement.executeQuery("select * from TAI.SETTINGS");
+
+			return resultSet.first() ? resultSet.getString("dropbox_token")
+					: null;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return null;
 	}
 
 }
