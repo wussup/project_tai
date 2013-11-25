@@ -30,6 +30,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 
+/**
+ * Login window
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class LoginView implements EntryPoint {
 
 	/**
@@ -183,7 +189,7 @@ public class LoginView implements EntryPoint {
 		}
 	}
 
-	public static void login() {
+	private static void login() {
 
 		String login = USERNAME_FIELD.getValue();
 		String password = PASSWORD_FIELD.getValue();

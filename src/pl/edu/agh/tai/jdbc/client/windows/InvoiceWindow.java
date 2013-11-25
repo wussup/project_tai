@@ -23,6 +23,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
+/**
+ * Add new invoice window
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class InvoiceWindow extends Window {
 
 	private SimpleComboBox<String> loginCombo = new SimpleComboBox<String>();

@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.tai.jdbc.shared.Invoice;
@@ -11,11 +10,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface GreetingServiceAsync {
-	public void greetServer(String input, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-
-	public void getUser(AsyncCallback<ArrayList<User>> callback)
-			throws IllegalArgumentException;
 
 	public void login(String login, String password,
 			AsyncCallback<Boolean> callback) throws IllegalArgumentException;

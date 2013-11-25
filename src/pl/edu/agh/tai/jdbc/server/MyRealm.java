@@ -10,6 +10,12 @@ import org.apache.shiro.realm.jdbc.JdbcRealm;
 import pl.edu.agh.tai.jdbc.client.User;
 import pl.edu.agh.tai.jdbc.server.mysql.MySQLAccess;
 
+/**
+ * Apache Shiro helper
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class MyRealm extends JdbcRealm {
 
 	@Override

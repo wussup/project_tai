@@ -1,5 +1,11 @@
 package pl.edu.agh.tai.jdbc.shared;
 
+/**
+ * Global variables
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public final class StaticData {
 
 	private static String APP_KEY = "apm3dfhibte9645";

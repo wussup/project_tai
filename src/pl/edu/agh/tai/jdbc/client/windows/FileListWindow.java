@@ -32,6 +32,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
+/**
+ * File list window after log in
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class FileListWindow extends Window {
 
 	private Button logoutButton = new Button("Logout",

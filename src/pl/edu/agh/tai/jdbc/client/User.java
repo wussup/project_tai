@@ -2,6 +2,12 @@ package pl.edu.agh.tai.jdbc.client;
 
 import java.io.Serializable;
 
+/**
+ * Pojo class represents user info
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;

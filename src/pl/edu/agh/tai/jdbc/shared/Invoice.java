@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
+/**
+ * POJO invoice class
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class Invoice extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = -9097047980599913344L;
@@ -14,6 +20,14 @@ public class Invoice extends BaseModel implements Serializable {
 		super();
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name of invoice
+	 * @param isDir
+	 *            is catalog
+	 */
 	public Invoice(String name, boolean isDir) {
 		this.name = name;
 		this.isDir = isDir;

@@ -4,6 +4,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
+/**
+ * Provides images from sources
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public interface ImageProvider extends ClientBundle {
 
 	public ImageProvider INSTANCE = GWT.create(ImageProvider.class);

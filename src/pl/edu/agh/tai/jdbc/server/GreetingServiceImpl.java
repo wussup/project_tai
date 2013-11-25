@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
 import pl.edu.agh.tai.jdbc.server.mysql.MySQLAccess;
-import pl.edu.agh.tai.jdbc.shared.FieldVerifier;
 import pl.edu.agh.tai.jdbc.shared.Invoice;
 import pl.edu.agh.tai.jdbc.shared.StaticData;
 
@@ -58,6 +57,9 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	private DbxClient currentClient;
 	private User applicationUser;
 
+	/**
+	 * Constructor
+	 */
 	public GreetingServiceImpl() {
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory
@@ -121,10 +123,10 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<String> getUsersNames() throws Exception {
+	public List<String> getUsersNames() {
 		MySQLAccess sql = new MySQLAccess();
 		List<String> names = new ArrayList<String>();
-		for (User user : sql.readDataBase()) {
+		for (User user : sql.getAllUsers()) {
 			names.add(user.toString());
 		}
 
@@ -161,55 +163,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		access.createUser(user);
 		log.info("User with login:" + user.getLogin() + " hashedPassword:"
 				+ user.getPassword() + " salt:" + user.getSalt());
-	}
-
-	public String greetServer(String input) throws IllegalArgumentException {
-		// Verify that the input is valid.
-		if (!FieldVerifier.isValidName(input)) {
-			// If the input is not valid, throw an IllegalArgumentException back
-			// to
-			// the client.
-			throw new IllegalArgumentException(
-					"Name must be at least 4 characters long");
-		}
-
-		String serverInfo = getServletContext().getServerInfo();
-		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
-
-		// Escape data from the client to avoid cross-site script
-		// vulnerabilities.
-		input = escapeHtml(input);
-		userAgent = escapeHtml(userAgent);
-
-		return "Hello, " + input + "!<br><br>I am running " + serverInfo
-				+ ".<br><br>It looks like you are using:<br>" + userAgent;
-	}
-
-	/**
-	 * Escape an html string. Escaping data received from the client helps to
-	 * prevent cross-site script vulnerabilities.
-	 * 
-	 * @param html
-	 *            the html string to escape
-	 * @return the escaped string
-	 */
-	private String escapeHtml(String html) {
-		if (html == null) {
-			return null;
-		}
-		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
-				.replaceAll(">", "&gt;");
-	}
-
-	@Override
-	public ArrayList<User> getUser() {
-		MySQLAccess access = new MySQLAccess();
-		try {
-			return access.readDataBase();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override

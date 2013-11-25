@@ -7,6 +7,12 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.SimpleByteSource;
 
+/**
+ * Apache Shiro salt helper
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class MySaltedAuthentificationInfo implements SaltedAuthenticationInfo {
 
 	private static final long serialVersionUID = -2342452442602696063L;

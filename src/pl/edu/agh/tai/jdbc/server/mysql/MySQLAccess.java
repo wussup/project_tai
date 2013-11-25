@@ -9,7 +9,14 @@ import java.util.ArrayList;
 
 import pl.edu.agh.tai.jdbc.client.User;
 
+/**
+ * Miscellaneous methods for operate on database
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ */
 public class MySQLAccess {
+
 	private Connection connect = null;
 	private Statement statement = null;
 	private java.sql.PreparedStatement preparedStatement = null;
@@ -17,6 +24,13 @@ public class MySQLAccess {
 
 	private static String PORT = "3307";
 
+	/**
+	 * Find user info by user login from database
+	 * 
+	 * @param login
+	 *            user login
+	 * @return user info
+	 */
 	public User getUserByLogin(String login) {
 		try {
 			connectToDatabase();
@@ -44,22 +58,13 @@ public class MySQLAccess {
 		return null;
 	}
 
-	private void connectToDatabase() throws ClassNotFoundException,
-			SQLException {
-		getConnection();
-
-		// Statements allow to issue SQL queries to the database
-		statement = connect.createStatement();
-	}
-
-	private void getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-
-		// Setup the connection with the DB
-		connect = DriverManager.getConnection("jdbc:mysql://localhost:" + PORT
-				+ "/tai?" + "user=root");
-	}
-
+	/**
+	 * Create user in database by user info
+	 * 
+	 * @param user
+	 *            user info
+	 * @return success or fail
+	 */
 	public boolean createUser(User user) {
 		try {
 			getConnection();
@@ -84,7 +89,64 @@ public class MySQLAccess {
 		return false;
 	}
 
-	public ArrayList<User> readDataBase() throws Exception {
+	/**
+	 * Check database whether contain login and password
+	 * 
+	 * @param login
+	 *            login for check
+	 * @param password
+	 *            password for check
+	 * @return success or fail
+	 */
+	public boolean login(String login, String password) {
+		// This will load the MySQL driver, each DB has its own driver
+		try {
+			connectToDatabase();
+			// Result set get the result of the SQL query
+			resultSet = statement
+					.executeQuery("select * from TAI.USERS as u where u.login=\'"
+							+ login + "\' and u.password=\'" + password + "\'");
+
+			return resultSet.first();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return false;
+	}
+
+	/**
+	 * Find dropbox token for logging to Dropbox
+	 * 
+	 * @return dropbox token
+	 */
+	public String getDropboxToken() {
+		try {
+			connectToDatabase();
+			// Result set get the result of the SQL query
+			resultSet = statement.executeQuery("select * from TAI.SETTINGS");
+
+			return resultSet.first() ? resultSet.getString("dropbox_token")
+					: null;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return null;
+	}
+
+	/**
+	 * Fetch all users from database
+	 * 
+	 * @return all users from database
+	 */
+	public ArrayList<User> getAllUsers() {
 		try {
 			connectToDatabase();
 			// Result set get the result of the SQL query
@@ -92,10 +154,11 @@ public class MySQLAccess {
 			return writeResultSet(resultSet);
 
 		} catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		} finally {
 			close();
 		}
+		return null;
 
 	}
 
@@ -118,6 +181,22 @@ public class MySQLAccess {
 		return users;
 	}
 
+	private void connectToDatabase() throws ClassNotFoundException,
+			SQLException {
+		getConnection();
+
+		// Statements allow to issue SQL queries to the database
+		statement = connect.createStatement();
+	}
+
+	private void getConnection() throws ClassNotFoundException, SQLException {
+		Class.forName("com.mysql.jdbc.Driver");
+
+		// Setup the connection with the DB
+		connect = DriverManager.getConnection("jdbc:mysql://localhost:" + PORT
+				+ "/tai?" + "user=root");
+	}
+
 	// You need to close the resultSet
 	private void close() {
 		try {
@@ -135,44 +214,6 @@ public class MySQLAccess {
 		} catch (Exception e) {
 
 		}
-	}
-
-	public boolean login(String login, String password) {
-		// This will load the MySQL driver, each DB has its own driver
-		try {
-			connectToDatabase();
-			// Result set get the result of the SQL query
-			resultSet = statement
-					.executeQuery("select * from TAI.USERS as u where u.login=\'"
-							+ login + "\' and u.password=\'" + password + "\'");
-
-			return resultSet.first();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}
-		return false;
-	}
-
-	public String getDropboxToken() {
-		try {
-			connectToDatabase();
-			// Result set get the result of the SQL query
-			resultSet = statement.executeQuery("select * from TAI.SETTINGS");
-
-			return resultSet.first() ? resultSet.getString("dropbox_token")
-					: null;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}
-		return null;
 	}
 
 }
