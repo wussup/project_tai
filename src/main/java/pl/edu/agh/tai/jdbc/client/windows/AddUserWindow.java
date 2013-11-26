@@ -164,7 +164,7 @@ public class AddUserWindow extends Window {
 		});
 		
 		setWidth(275);
-		setHeight(300);
+		setHeight(350);
 		setResizable(false);
 		setClosable(false);
 		setModal(true);
