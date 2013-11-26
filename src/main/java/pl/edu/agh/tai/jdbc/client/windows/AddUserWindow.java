@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public class AddUserWindow extends Window {
 	private Button addNewUser = new Button("Add new user", AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
+	private Button close = new Button ("Close", AbstractImagePrototype.create(ImageProvider.INSTANCE.getCloseIcon()));
 	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
 	/**
@@ -37,7 +38,7 @@ public class AddUserWindow extends Window {
 		setLayout(new VBoxLayout(VBoxLayoutAlign.CENTER));
 		
 		
-		
+		addButton(close);
 		addButton(addNewUser);
 		
 		LabelField surnameLabel = new LabelField();
@@ -154,6 +155,13 @@ public class AddUserWindow extends Window {
 					}
 		});
 	
+		close.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				hide();				
+			}
+		});
 		
 		setWidth(275);
 		setHeight(300);
