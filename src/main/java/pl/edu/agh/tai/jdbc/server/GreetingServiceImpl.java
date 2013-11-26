@@ -33,6 +33,7 @@ import pl.edu.agh.tai.jdbc.shared.Invoice;
 import pl.edu.agh.tai.jdbc.shared.StaticData;
 
 import com.dropbox.core.DbxAppInfo;
+import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
@@ -48,8 +49,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
 	private static final long serialVersionUID = -4051026136441981243L;
-	// private static final String token =
-	// "G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt";
 	private static final transient Logger log = LoggerFactory
 			.getLogger(GreetingServiceImpl.class);
 
@@ -127,7 +126,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		MySQLAccess sql = new MySQLAccess();
 		List<String> names = new ArrayList<String>();
 		for (User user : sql.getAllUsers()) {
-			names.add(user.toString());
+			if (user.getType() == 1)
+				names.add(user.toString());
 		}
 
 		return names;
@@ -154,7 +154,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 		// TODO pobierac z GUI typ
 		User user = new User(name, surname, login, hashedPasswordBase64,
-				salt.toString(), 0);
+				salt.toString(), 1);
 		this.createUser(user);
 	}
 
@@ -190,25 +190,44 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String logOnDropbox() {
+	public String logOnDropbox(String code){
+	      
+	      DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(), StaticData.getAPP_SECRET());
+
+	      DbxRequestConfig config = new DbxRequestConfig(StaticData.getPROJECT_NAME(),
+	      Locale.getDefault().toString());
+	      DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+	      DbxAuthFinish authFinish;		
+				try {
+					authFinish = webAuth.finish(code);
+				    DbxClient client = new DbxClient(config, authFinish.accessToken);
+				    MySQLAccess sql = new MySQLAccess();
+				    sql.setDropboxToken(authFinish.accessToken);
+				    currentClient = client;
+			        return ("Linked account:" + client.getAccountInfo().displayName);
+				} catch (DbxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+
+		   return null;
+	}
+	
+	@Override
+	public String logOnDropboxWithoutToken() {
 		DbxRequestConfig config = new DbxRequestConfig(
 				StaticData.getPROJECT_NAME(), Locale.getDefault().toString());
+		MySQLAccess sql = new MySQLAccess();
+		String token = sql.getDropboxToken();
+		DbxClient client = new DbxClient(config, token);
+		currentClient = client;
 		try {
-			MySQLAccess sql = new MySQLAccess();
-			String token = sql.getDropboxToken();
-			if (token != null) {
-				DbxClient client = new DbxClient(config, token);
-
-				currentClient = client;
-				return ("Linked account:" + client.getAccountInfo().displayName);
-			} else {
-				// TODO: Dorobic funkcje createTokenCosTam
-			}
+			return ("Linked account:"+ client.getAccountInfo().displayName);
 		} catch (DbxException e) {
 			e.printStackTrace();
 		}
-
 		return null;
+
 	}
 
 	@Override
@@ -217,123 +236,92 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		DbxEntry.WithChildren listing;
 		List<Invoice> result = new ArrayList<Invoice>();
 		try {
-			listing = currentClient.getMetadataWithChildren("/"
-					+ applicationUser.getLogin());
-			System.out.println("Files in the root path:");
-			for (DbxEntry child : listing.children) {
-				Invoice invoice = new Invoice();
-				invoice.setName(child.name);
-				result.add(invoice);
-				System.out.println("	" + child.name + ": " + child.toString());
-				System.out.println("�CIEZKA --->" + child.path);
-			}
-
-			return result;
-		} catch (DbxException e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
-	@Override
-	public List<Invoice> getAdminFileList(String folderName) {
-
-		DbxEntry.WithChildren listing;
-		List<Invoice> result = new ArrayList<Invoice>();
-		try {
-			if (folderName == null) {
-				listing = currentClient.getMetadataWithChildren("/");
-			} else {
+			if (applicationUser.getType() == 1)
 				listing = currentClient.getMetadataWithChildren("/"
-						+ folderName);
-			}
+					+ applicationUser.getLogin());
+			else 
+				listing = currentClient.getMetadataWithChildren("/");
+						
+			
+			DbxEntry.WithChildren childrenListing;
 			System.out.println("Files in the root path:");
 			for (DbxEntry child : listing.children) {
-				Invoice invoice = new Invoice();
-				invoice.setName(child.name);
-				invoice.setDir(child.isFolder());
-				result.add(invoice);
-				System.out.println("	" + child.name + ": " + child.toString());
-				System.out.println("�CIEZKA --->" + child.path);
+				if (child.isFolder()){
+					childrenListing = currentClient.getMetadataWithChildren("/"
+							+ child.name);
+					for  (DbxEntry children : childrenListing.children) {
+						Invoice inv = new Invoice();
+						inv.setName(children.name + " - file for user - " + child.name);
+						result.add(inv);
+						System.out.println("	" + children.name + ": " + children.toString());
+						System.out.println("ŚCIEZKA --->" + children.path);
+					}
+				} else {
+					Invoice invoice = new Invoice();
+					invoice.setName(child.name);
+					result.add(invoice);
+					System.out.println("	" + child.name + ": " + child.toString());
+					System.out.println("ŚCIEZKA --->" + child.path);
+				}
 			}
-
-			java.util.Collections.sort(result, new Comparator<Invoice>() {
+			
+			java.util.Collections.sort(result, new Comparator<Invoice>(){
 
 				@Override
-				public int compare(Invoice o1, Invoice o2) {
-					if (o1.isDir() && !o2.isDir())
-						return -1;
-					else if (o2.isDir() && !o1.isDir())
-						return 1;
-					else
-						return 0;
+				public int compare(Invoice arg0, Invoice arg1) {
+					if (applicationUser.getType() == 1)
+						return arg0.getName().compareTo(arg1.getName());
+					else 
+						return arg0.getName().split(" - ")[2].compareTo(arg1.getName().split(" - ")[2]);					
 				}
+				
 			});
 
 			return result;
 		} catch (DbxException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 
-	}
-
-	@Override
-	public void addFile(String name) {
-		try {
-			String text = "Hapaj dzidke";
-			File inputFile = new File("hapaj.txt");
-			BufferedWriter output = new BufferedWriter(
-					new FileWriter(inputFile));
-			output.write(text);
-			output.close();
-			FileInputStream inputStream = new FileInputStream(inputFile);
-			DbxEntry.File uploadedFile = currentClient.uploadFile("/hapaj.txt",
-					DbxWriteMode.add(), inputFile.length(), inputStream);
-			System.out.println("Uploaded: " + uploadedFile.toString());
-			inputStream.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (DbxException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
 	public boolean downloadFile(String name) {
 		FileOutputStream outputStream = null;
 		try {
-
+			
 			File dir = new File("C:\\invoices");
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
-			File file = new File("C:\\invoices\\" + name);
-			outputStream = new FileOutputStream(file);
+			
+			outputStream = new FileOutputStream("C:\\invoices\\"+name.split(" - ")[0]);
 			DbxEntry.File downloadedFile;
-
-			downloadedFile = currentClient
-					.getFile("/" + applicationUser.getLogin() + "/" + name, null,
-							outputStream);
-			if (downloadedFile!=null)
-			{
-				System.out
-						.println(com.dropbox.core.DbxEntry.File.Reader.toString());
-	
-				System.out.println("Metadata: " + downloadedFile.toString());
-				return true;
+			
+			if (name.contains(" - ")){
+			
+			downloadedFile = currentClient.getFile(
+					"/" + name.split(" - ")[2] + "/" + name.split(" - ")[0], null,
+					outputStream);
+			
+			} else {
+				downloadedFile = currentClient.getFile(
+						"/" + applicationUser.getLogin() + "/" + name, null,
+						outputStream);
 			}
-			return false;
+//			System.out.println(downloadedFile.Reader.toString());
+			
+			System.out.println("Metadata: " + downloadedFile.toString());
+			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (DbxException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e){
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			try {
 				outputStream.close();
 			} catch (IOException e) {
@@ -341,6 +329,40 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean uploadFile(String name, String content, String userLogin) throws IOException{
+		try {
+		File file = new File (name+".txt");
+		if (!file.exists()){
+			file.createNewFile();
+		} 
+		
+		FileWriter writer = new FileWriter(file.getName(), true);
+		BufferedWriter bufferWriter = new BufferedWriter(writer);
+		bufferWriter.write(content);
+		bufferWriter.close();
+		
+		FileInputStream uploadFile = new FileInputStream(file);
+		try{			
+			currentClient.uploadFile("/"+userLogin+"/"+name+".txt", DbxWriteMode.force(), file.length(), uploadFile);			
+			return true;
+		} catch (DbxException e){
+			e.printStackTrace();
+			uploadFile.close();
+			return false;
+		}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	@Override
+	public String getToken(){
+		MySQLAccess sql = new MySQLAccess();
+		return sql.getDropboxToken();
 	}
 
 }

@@ -22,6 +22,19 @@ public class User implements Serializable {
 
 	}
 
+	/**
+	 * constructor
+	 * @param name
+	 * 		user name
+	 * @param surname
+	 * 		user surname
+	 * @param login
+	 * 		user login
+	 * @param password
+	 * 		user password
+	 * @param type
+	 * 		user type
+	 */
 	public User(String name, String surname, String login, String password,
 			int type) {
 		this.name = name;
@@ -31,6 +44,19 @@ public class User implements Serializable {
 		this.type = type;
 	}
 
+	/**
+	 * constructor
+	 * @param name
+	 * 		user name
+	 * @param surname
+	 * 		user surname
+	 * @param login
+	 * 		user login
+	 * @param password
+	 * 		user password
+	 * @param type
+	 * 		user type
+	 */
 	public User(String name, String surname, String login, String password,
 			String salt, int type) {
 		this.name = name;

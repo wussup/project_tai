@@ -1,5 +1,6 @@
 package pl.edu.agh.tai.jdbc.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import pl.edu.agh.tai.jdbc.shared.Invoice;
@@ -72,14 +73,6 @@ public interface GreetingService extends RemoteService {
 	public String getAuthorizationLink();
 
 	/**
-	 * Add file to system
-	 * 
-	 * @param name
-	 *            name of file
-	 */
-	public void addFile(String name);
-
-	/**
 	 * Get file list in system
 	 * 
 	 * @return file list
@@ -103,20 +96,12 @@ public interface GreetingService extends RemoteService {
 	public boolean downloadFile(String name);
 
 	/**
-	 * Log in dropbox
+	 * Log in dropbox with token authorization
 	 * 
 	 * @return dropbox account owner
 	 */
-	public String logOnDropbox();
+	public String logOnDropbox(String code);
 
-	/**
-	 * Get admin file list
-	 * 
-	 * @param folderName
-	 *            name of folder
-	 * @return list of invoices
-	 */
-	public List<Invoice> getAdminFileList(String folderName);
 
 	/**
 	 * Get all user names
@@ -125,4 +110,35 @@ public interface GreetingService extends RemoteService {
 	 * @throws Exception
 	 */
 	public List<String> getUsersNames();
+
+	/**
+	 * Log in dropbox without token authorization
+	 * 
+	 * @return dropbox account owner
+	 */
+	public String logOnDropboxWithoutToken();
+
+	/**
+	 * 
+	 * @param name
+	 * 		name of file
+	 * @param content
+	 * 		content of file
+	 * @param userLogin
+	 * 		user login
+	 * @return
+	 * 		true is file will be saved, otherwise false
+	 * @throws IOException
+	 */
+	public boolean uploadFile(String name, String content, String userLogin)
+			throws IOException;
+
+	/**
+	 * Getting token to authorization Dropbox connection
+	 * @return
+	 * 		token from database
+	 */
+	public String getToken();
+
+	
 }

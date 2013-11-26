@@ -22,7 +22,7 @@ public class MySQLAccess {
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-	private static String PORT = "3307";
+	private static String PORT = "3306";
 
 	/**
 	 * Find user info by user login from database
@@ -70,12 +70,13 @@ public class MySQLAccess {
 			getConnection();
 
 			preparedStatement = connect
-					.prepareStatement("insert into  TAI.USERS(userId, name, surname, login, password, salt) values (default, ?, ?, ?, ? , ?)");
+					.prepareStatement("insert into  TAI.USERS(userId, name, surname, login, password, salt, userType) values (default, ?, ?, ?, ? , ?, ?)");
 			preparedStatement.setString(1, user.getName());
 			preparedStatement.setString(2, user.getSurname());
 			preparedStatement.setString(3, user.getLogin());
 			preparedStatement.setString(4, user.getPassword());
 			preparedStatement.setString(5, user.getSalt());
+			preparedStatement.setInt(6, user.getType());
 			preparedStatement.executeUpdate();
 
 			return true;
@@ -116,29 +117,6 @@ public class MySQLAccess {
 			close();
 		}
 		return false;
-	}
-
-	/**
-	 * Find dropbox token for logging to Dropbox
-	 * 
-	 * @return dropbox token
-	 */
-	public String getDropboxToken() {
-		try {
-			connectToDatabase();
-			// Result set get the result of the SQL query
-			resultSet = statement.executeQuery("select * from TAI.SETTINGS");
-
-			return resultSet.first() ? resultSet.getString("dropbox_token")
-					: null;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}
-		return null;
 	}
 
 	/**
@@ -214,6 +192,78 @@ public class MySQLAccess {
 		} catch (Exception e) {
 
 		}
+	}
+	
+	/**
+	 * Getting dropbox token for logging to Dropbox
+	 * 
+	 * @return dropbox token
+	 */
+	public String getDropboxToken() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// Setup the connection with the DB
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
+
+			// Statements allow to issue SQL queries to the database
+			statement = connect.createStatement();
+			// Result set get the result of the SQL query
+			resultSet = statement.executeQuery("select * from TAI.SETTINGS");
+
+			return resultSet.first() ? resultSet.getString("dropbox_token")
+					: null;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return null;
+	}
+	
+	/**
+	 * Set new Dropbox token and save it to DB
+	 * @param token
+	 * 		new token
+	 * @return
+	 * 		true if operation done, otherwise false
+	 */
+	public boolean setDropboxToken(String token) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+						
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
+					+ PORT + "/tai?" + "user=root");
+			
+			// Statements allow to issue SQL queries to the database
+			statement = connect.createStatement();
+			ResultSet tokenExist = statement.executeQuery("select * from TAI.SETTINGS");
+
+			
+			// Result set get the result of the SQL query
+			if (tokenExist.first()){				
+				statement.executeUpdate("update TAI.SETTINGS set dropbox_token=\""+token+"\" WHERE settingId IS NOT NULL");				
+			}
+			else{
+				preparedStatement = connect
+						.prepareStatement("insert into  TAI.SETTINGS(settingId, dropbox_token) values (default, ?)");
+				preparedStatement.setString(1, token);
+				preparedStatement.executeUpdate();
+		
+			}
+
+			return true;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return false;
 	}
 
 }

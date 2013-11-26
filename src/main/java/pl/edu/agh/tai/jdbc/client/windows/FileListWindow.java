@@ -14,13 +14,15 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -33,31 +35,30 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * File list window after log in
- * 
- * @since 26.11.2013
- * @author Taras Melon&Jakub Kolodziej
+ * window where all files are display in grid
+ * @author Kuba
+ *
  */
 public class FileListWindow extends Window {
 
-	private Button logoutButton = new Button("Logout",
-			AbstractImagePrototype.create(ImageProvider.INSTANCE
-					.getLogoutIcon()));
+	private Button logoutButton = new Button("Logout", AbstractImagePrototype.create(ImageProvider.INSTANCE.getLogoutIcon()));
 	private Button downloadButton = new Button("Download File",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getFooIcon()));
-
-	private Button createInvoice = new Button("Create new Invoice",
+	private Button dropboxLinking = new Button("Change Dropbox Linking Account", AbstractImagePrototype.create(ImageProvider.INSTANCE.getDropboxIcon()));
+	private Button addNewUser = new Button ("Add new user", AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
+	private Button createInvoice = new Button ("Create new Invoice", 
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 	private Grid<ModelData> grid;
 	private ColumnModel cm;
-	private final ListLoader<ListLoadResult<Invoice>> loader;
-	private final ListStore<ModelData> itemStore;
+	private ListLoader<ListLoadResult<Invoice>> loader;
+	private ListStore<ModelData> itemStore;
 	private RpcProxy<List<Invoice>> proxy;
-
-	private String folder = null;
-
+	
+	/**
+	 * constructor, adding all fields
+	 */
 	public FileListWindow(final int type) {
 		setWidth(400);
 		setHeight(300);
@@ -66,81 +67,9 @@ public class FileListWindow extends Window {
 		setModal(true);
 		setResizable(false);
 
-		ToolBar toolbar = new ToolBar();
-		toolbar.setHeight(25);
-		if (type == 0) {
-			toolbar.add(createInvoice);
-		}
-		FillToolItem item = new FillToolItem();
-		toolbar.add(item);
-		toolbar.add(downloadButton);
-		downloadButton
-				.addSelectionListener(new SelectionListener<ButtonEvent>() {
+		createToolbars(type);
 
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						for (final ModelData data : grid.getSelectionModel()
-								.getSelectedItems()) {
-							greetingService.downloadFile(data.get("name")
-									.toString(), new AsyncCallback<Boolean>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									MessageBox
-											.alert("Error!",
-													"Sorry, but error is occured in downloadFile method!",
-													null);
-								}
-
-								@Override
-								public void onSuccess(Boolean result) {
-									if (result) {
-										Info.display("Successfully", "File "
-												+ data.get("name").toString()
-												+ " is downloaded!");
-									}
-									else
-									{
-										Info.display("Error", "You can not download this file!");
-									}
-								}
-							});
-						}
-					}
-				});
-
-		createInvoice
-				.addSelectionListener(new SelectionListener<ButtonEvent>() {
-
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						try {
-							new InvoiceWindow().show();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-
-		setTopComponent(toolbar);
-
-		if (type == 1) {
-			proxy = new RpcProxy<List<Invoice>>() {
-				@Override
-				protected void load(Object loadConfig,
-						final AsyncCallback<List<Invoice>> callback) {
-					greetingService.getFileList(callback);
-				}
-			};
-		} else {
-			proxy = new RpcProxy<List<Invoice>>() {
-				@Override
-				protected void load(Object loadConfig,
-						final AsyncCallback<List<Invoice>> callback) {
-					greetingService.getAdminFileList(folder, callback);
-				}
-			};
-		}
+		createProxy(type);
 
 		loader = new BaseListLoader<ListLoadResult<Invoice>>(proxy);
 		itemStore = new ListStore<ModelData>(loader);
@@ -163,13 +92,15 @@ public class FileListWindow extends Window {
 					public void selectionChanged(
 							final SelectionChangedEvent<ModelData> se) {
 						if (type == 0) {
-							boolean isDir = ((Invoice) se.getSelectedItem())
-									.isDir();
-							if (isDir) {
-								folder = se.getSelectedItem().get("name")
-										.toString();
-								itemStore.getLoader().load();
-								grid.repaint();
+							boolean isDir = (!se.getSelectedItem().get("name").toString().contains("."));
+							if (isDir)
+							{
+								downloadButton.setVisible(false);
+								grid.getStore().getLoader().load();
+								
+								
+							} else {
+								downloadButton.setVisible(true);
 							}
 						}
 					}
@@ -185,10 +116,8 @@ public class FileListWindow extends Window {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageBox
-								.alert("Error!",
-										"Sorry, but error is occured in logout method!",
-										null);
+						// TODO Auto-generated method stub
+
 					}
 
 					@Override
@@ -203,6 +132,105 @@ public class FileListWindow extends Window {
 		});
 		addButton(logoutButton);
 
+	}
+
+	private void createProxy(int type) {
+			proxy = new RpcProxy<List<Invoice>>() {
+				@Override
+				protected void load(Object loadConfig,
+						final AsyncCallback<List<Invoice>> callback) {
+					greetingService.getFileList(callback);
+				}
+			};			
+	}
+
+	private void createToolbars(int type) {
+		ToolBar toolbar = new ToolBar();
+		ToolBar bottomToolbar = new ToolBar();
+		toolbar.setHeight(25);
+		if (type == 0){
+			toolbar.add(createInvoice);
+			bottomToolbar.add(dropboxLinking);
+			FillToolItem item = new FillToolItem();
+			bottomToolbar.add(item);
+			bottomToolbar.add(addNewUser);
+			
+			createInvoice.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					try {
+						InvoiceWindow window = new InvoiceWindow();
+						window.show();
+						window.addListener(Events.Hide, new Listener<BaseEvent>() {
+
+							@Override
+							public void handleEvent(BaseEvent be) {
+								grid.getStore().getLoader().load();							
+							}
+						});
+					} catch (Exception e) {
+						e.printStackTrace();
+					}				
+				}
+			});
+			
+			dropboxLinking.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					new AuthorizationWindow().show();					
+				}
+			});
+			
+			addNewUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+				@Override
+				public void componentSelected(ButtonEvent ce) {
+					new AddUserWindow().show();					
+				}
+				
+			});
+			
+			
+		}
+		FillToolItem item = new FillToolItem();
+		toolbar.add(item);
+		toolbar.add(downloadButton);
+		downloadButton
+				.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+					@Override
+					public void componentSelected(ButtonEvent ce) {
+						for (final ModelData data : grid.getSelectionModel()
+								.getSelectedItems()) {
+							greetingService.downloadFile(data.get("name")
+									.toString(), new AsyncCallback<Boolean>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public void onSuccess(Boolean result) {
+									Info.display("Successfully", "File "
+											+ data.get("name").toString()
+											+ " is downloaded!");
+								}
+							});
+						}
+					}
+				});
+		
+		
+		
+		
+		
+		setTopComponent(toolbar);
+		setBottomComponent(bottomToolbar);
+		
 	}
 
 }

@@ -1,5 +1,6 @@
 package pl.edu.agh.tai.jdbc.client;
 
+import pl.edu.agh.tai.jdbc.client.windows.AuthorizationWindow;
 import pl.edu.agh.tai.jdbc.client.windows.FileListWindow;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 
@@ -53,10 +54,10 @@ public class LoginView implements EntryPoint {
 	private static final TextField<String> USERNAME_FIELD = createField(
 			"Login", false);
 	private static final TextField<String> PASSWORD_FIELD = createField(
-			"Has�o", true);
+			"Password", true);
 
 	private static final Status STATUS_BOX = new Status();
-	private static final Button LOGIN_BTN = new Button("Zaloguj");
+	private static final Button LOGIN_BTN = new Button("Login");
 
 	static {
 		WINDOW.setIcon(AbstractImagePrototype.create(ImageProvider.INSTANCE
@@ -210,55 +211,61 @@ public class LoginView implements EntryPoint {
 							WINDOW.hide();
 							Info.display("Success!",
 									"You have successfully logged in!");
-							greetingService
-									.logOnDropbox(new AsyncCallback<String>() {
+							greetingService.getToken(new AsyncCallback<String>() {
+
+								@Override
+								public void onFailure(Throwable arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+
+								@Override
+								public void onSuccess(String result) {
+									if (result == null){
+										new AuthorizationWindow().show();
+									} else {greetingService.logOnDropboxWithoutToken(new AsyncCallback<String>() {
 
 										@Override
 										public void onFailure(Throwable caught) {
-											MessageBox
-													.alert("Error!",
-															"Sorry, but error is occured in logOnDropbox method!",
-															null);
+											// TODO Auto-generated method stub
+											
 										}
 
 										@Override
 										public void onSuccess(String result) {
-											String[] splitted = result
-													.split(":");
-											Info.display(splitted[0],
-													splitted[1]);
-											greetingService
-													.getApplicationUser(new AsyncCallback<User>() {
+											String[] splitted = result.split(":");
+											Info.display(splitted[0], splitted[1]);
+											greetingService.getApplicationUser(new AsyncCallback<User>() {
 
-														@Override
-														public void onFailure(
-																Throwable caught) {
-															MessageBox
-																	.alert("Error!",
-																			"Sorry, but error is occured in getApplicationUser method!",
-																			null);
-														}
+												@Override
+												public void onFailure(Throwable caught) {
+													// TODO Auto-generated method stub
+													
+												}
 
-														@Override
-														public void onSuccess(
-																User result) {
-															FileListWindow fileWindow = new FileListWindow(
-																	result.getType());
-															fileWindow.show();
-
-														}
-													});
+												@Override
+												public void onSuccess(User result) {
+													FileListWindow fileWindow = new FileListWindow(result.getType());
+													fileWindow.show();											
+													
+												}
+											});
 										}
 									});
+								}
+							}
+							
+						});
+						
 
-						} else {
-							MessageBox.alert("Error!",
-									"Wrong login or password", null);
-						}
+					} else {
+						MessageBox.alert("Error!",
+								"Wrong login or password", null);
 					}
+				}
 
-				});
-	}
+			});
+}
 
 	public void showWindow() {
 		WINDOW.show();

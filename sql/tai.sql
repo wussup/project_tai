@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Czas wygenerowania: 26 Lis 2013, 00:59
+-- Czas wygenerowania: 26 Lis 2013, 22:40
 -- Wersja serwera: 5.5.32
 -- Wersja PHP: 5.4.19
 
@@ -29,8 +29,8 @@ USE `tai`;
 --
 
 CREATE TABLE IF NOT EXISTS `settings` (
-  `settingId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `dropbox_token` varchar(255) DEFAULT NULL,
+  `settingId` int(11) NOT NULL AUTO_INCREMENT,
+  `dropbox_token` varchar(255) NOT NULL,
   PRIMARY KEY (`settingId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`settingId`, `dropbox_token`) VALUES
-(1, 'G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt');
+(1, 'ENxXzs04ZqgAAAAAAAAAAfugJwzlqPS2Zl8NYB_JCMJZwieV1usjjUc3vh5GJ0kR');
 
 -- --------------------------------------------------------
 
@@ -57,14 +57,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   `userType` int(10) unsigned NOT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `login` (`login`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Zrzut danych tabeli `users`
 --
 
 INSERT INTO `users` (`userId`, `name`, `login`, `password`, `surname`, `salt`, `userType`) VALUES
-(3, 'Tarasik', 'taras', 'JrH0bj/3VRixNS2PbFS1AnFAxz303YD/LJeMjbqNVDM=', 'Melon', '5nibeheEn4u//GgxVGWRZA==', 0);
+(3, 'Tarasik', 'taras', 'JrH0bj/3VRixNS2PbFS1AnFAxz303YD/LJeMjbqNVDM=', 'Melon', '5nibeheEn4u//GgxVGWRZA==', 1),
+(4, 'Kuba', 'aragorn', 'MTwl0cSi0ewhh7+PSqyiIwfJpHysUPZML1krCfvB3/w=', 'Koodziej', '1nNVuA2k1UM8hNCUOs/Aag==', 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

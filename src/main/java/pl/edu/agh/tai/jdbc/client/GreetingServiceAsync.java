@@ -26,18 +26,21 @@ public interface GreetingServiceAsync {
 
 	public void getAuthorizationLink(AsyncCallback<String> callback);
 
-	public void logOnDropbox(AsyncCallback<String> callback);
+	void logOnDropbox(String code, AsyncCallback<String> callback);
 
 	public void getFileList(AsyncCallback<List<Invoice>> callback);
-
-	public void addFile(String name, AsyncCallback<Void> callback);
 
 	public void getApplicationUser(AsyncCallback<User> callback);
 
 	public void downloadFile(String name, AsyncCallback<Boolean> callback);
 
-	public void getAdminFileList(String folderName,
-			AsyncCallback<List<Invoice>> callback);
 
 	public void getUsersNames(AsyncCallback<List<String>> callback);
+
+	void logOnDropboxWithoutToken(AsyncCallback<String> callback);
+
+	void uploadFile(String name, String content, String userLogin,
+			AsyncCallback<Boolean> callback);
+
+	void getToken(AsyncCallback<String> callback);
 }
