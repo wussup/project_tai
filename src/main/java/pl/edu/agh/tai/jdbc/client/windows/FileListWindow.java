@@ -9,6 +9,7 @@ import pl.edu.agh.tai.jdbc.client.LoginView;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 import pl.edu.agh.tai.jdbc.shared.Invoice;
 
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
@@ -84,6 +85,7 @@ public class FileListWindow extends Window {
 		itemStore.getLoader().load();
 		grid = new Grid<ModelData>(itemStore, cm);
 		grid.setHeight(205);
+		
 
 		grid.getSelectionModel().addSelectionChangedListener(
 				new SelectionChangedListener<ModelData>() {
