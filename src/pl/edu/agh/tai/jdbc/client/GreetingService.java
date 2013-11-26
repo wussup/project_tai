@@ -125,4 +125,8 @@ public interface GreetingService extends RemoteService {
 	 * @throws Exception
 	 */
 	public List<String> getUsersNames();
+
+	public void logError(String className, String methodName);
+	
+	public void logWarn(String className, String message);
 }

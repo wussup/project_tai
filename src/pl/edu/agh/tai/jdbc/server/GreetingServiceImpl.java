@@ -103,7 +103,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 						+ "] logged in successfully.");
 				MySQLAccess sql = new MySQLAccess();
 				applicationUser = sql.getUserByLogin(username);
-				return true;
+				return applicationUser != null ? true : false;
 			} catch (UnknownAccountException uae) {
 				log.info("There is no user with username of "
 						+ token.getPrincipal());
@@ -336,6 +336,17 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void logError(String className, String methodName) {
+		log.error("Error in " + className + "!",
+				"Sorry, but error is occured in " + methodName + " method!");
+	}
+
+	@Override
+	public void logWarn(String className, String message) {
+		log.warn("Error in " + className + "!", message);
 	}
 
 }

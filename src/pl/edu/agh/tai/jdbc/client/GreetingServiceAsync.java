@@ -40,4 +40,9 @@ public interface GreetingServiceAsync {
 			AsyncCallback<List<Invoice>> callback);
 
 	public void getUsersNames(AsyncCallback<List<String>> callback);
+
+	void logError(String className, String methodName,
+			AsyncCallback<Void> callback);
+
+	void logWarn(String className, String message, AsyncCallback<Void> callback);
 }

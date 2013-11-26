@@ -199,8 +199,10 @@ public class LoginView implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageBox.alert("Error!", caught.getMessage(), null);
-
+						MessageBox
+								.alert("Error!",
+										"Sorry, but error is occured in tryLogin method!",
+										null);
 					}
 
 					@Override

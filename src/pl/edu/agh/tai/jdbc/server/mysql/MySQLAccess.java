@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.edu.agh.tai.jdbc.client.User;
 
 /**
@@ -17,12 +20,15 @@ import pl.edu.agh.tai.jdbc.client.User;
  */
 public class MySQLAccess {
 
+	private static String PORT = "3307";
+
+	private static final transient Logger log = LoggerFactory
+			.getLogger(MySQLAccess.class);
+
 	private Connection connect = null;
 	private Statement statement = null;
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
-
-	private static String PORT = "3307";
 
 	/**
 	 * Find user info by user login from database
@@ -39,19 +45,20 @@ public class MySQLAccess {
 					.executeQuery("select * from TAI.USERS as u where u.login=\'"
 							+ login + "\'");
 
-			resultSet.first();
-			String name = resultSet.getString("name");
-			String surname = resultSet.getString("surname");
-			String salt = resultSet.getString("salt");
-			String password = resultSet.getString("password");
-			int type = resultSet.getInt("userType");
-			User user = new User(name, surname, login, password, salt, type);
+			if (resultSet.first()) {
+				String name = resultSet.getString("name");
+				String surname = resultSet.getString("surname");
+				String salt = resultSet.getString("salt");
+				String password = resultSet.getString("password");
+				int type = resultSet.getInt("userType");
+				User user = new User(name, surname, login, password, salt, type);
 
-			return user;
+				return user;
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error!", "In method getUserByLogin", e);
 		} finally {
 			close();
 		}
