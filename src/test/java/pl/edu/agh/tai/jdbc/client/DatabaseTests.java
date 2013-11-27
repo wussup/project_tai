@@ -16,11 +16,13 @@ public class DatabaseTests extends TestCase {
 		sql = new MySQLAccess();
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		sql = new MySQLAccess();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		sql=null;

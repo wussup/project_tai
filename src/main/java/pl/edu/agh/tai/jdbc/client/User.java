@@ -115,6 +115,7 @@ public class User implements Serializable {
 		this.type = type;
 	}
 
+	@Override
 	public String toString() {
 		return login + " | " + name + " " + surname;
 	}

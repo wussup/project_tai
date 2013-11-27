@@ -6854,7 +6854,7 @@ b,pl.edu.agh.tai.jdbc.client.User::name,pl.edu.agh.tai.jdbc.client.User,name,pl/
 c,pl.edu.agh.tai.jdbc.client.User::password,pl.edu.agh.tai.jdbc.client.User,password,pl/edu/agh/tai/jdbc/client/User.java,17,-1
 d,pl.edu.agh.tai.jdbc.client.User::salt,pl.edu.agh.tai.jdbc.client.User,salt,pl/edu/agh/tai/jdbc/client/User.java,18,-1
 e,pl.edu.agh.tai.jdbc.client.User::surname,pl.edu.agh.tai.jdbc.client.User,surname,pl/edu/agh/tai/jdbc/client/User.java,15,-1
-GOb,pl.edu.agh.tai.jdbc.client.User::toString()Ljava/lang/String;,pl.edu.agh.tai.jdbc.client.User,toString,pl/edu/agh/tai/jdbc/client/User.java,118,0
+GOb,pl.edu.agh.tai.jdbc.client.User::toString()Ljava/lang/String;,pl.edu.agh.tai.jdbc.client.User,toString,pl/edu/agh/tai/jdbc/client/User.java,119,0
 f,pl.edu.agh.tai.jdbc.client.User::type,pl.edu.agh.tai.jdbc.client.User,type,pl/edu/agh/tai/jdbc/client/User.java,19,-1
 HOb,pl.edu.agh.tai.jdbc.client.User_FieldSerializer::deserialize(Lcom/google/gwt/user/client/rpc/SerializationStreamReader;Lpl/edu/agh/tai/jdbc/client/User;)V,pl.edu.agh.tai.jdbc.client.User_FieldSerializer,deserialize,gen/pl/edu/agh/tai/jdbc/client/User_FieldSerializer.java,64,0
 IOb,pl.edu.agh.tai.jdbc.client.User_FieldSerializer::instantiate(Lcom/google/gwt/user/client/rpc/SerializationStreamReader;)Lpl/edu/agh/tai/jdbc/client/User;,pl.edu.agh.tai.jdbc.client.User_FieldSerializer,instantiate,gen/pl/edu/agh/tai/jdbc/client/User_FieldSerializer.java,74,0
