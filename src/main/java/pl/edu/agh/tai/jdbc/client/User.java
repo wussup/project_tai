@@ -24,16 +24,17 @@ public class User implements Serializable {
 
 	/**
 	 * constructor
+	 * 
 	 * @param name
-	 * 		user name
+	 *            user name
 	 * @param surname
-	 * 		user surname
+	 *            user surname
 	 * @param login
-	 * 		user login
+	 *            user login
 	 * @param password
-	 * 		user password
+	 *            user password
 	 * @param type
-	 * 		user type
+	 *            user type
 	 */
 	public User(String name, String surname, String login, String password,
 			int type) {
@@ -46,16 +47,17 @@ public class User implements Serializable {
 
 	/**
 	 * constructor
+	 * 
 	 * @param name
-	 * 		user name
+	 *            user name
 	 * @param surname
-	 * 		user surname
+	 *            user surname
 	 * @param login
-	 * 		user login
+	 *            user login
 	 * @param password
-	 * 		user password
+	 *            user password
 	 * @param type
-	 * 		user type
+	 *            user type
 	 */
 	public User(String name, String surname, String login, String password,
 			String salt, int type) {

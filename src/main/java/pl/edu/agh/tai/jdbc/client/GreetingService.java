@@ -103,7 +103,6 @@ public interface GreetingService extends RemoteService {
 	 */
 	public String logOnDropbox(String code);
 
-
 	/**
 	 * Get all user names
 	 * 
@@ -122,13 +121,12 @@ public interface GreetingService extends RemoteService {
 	/**
 	 * 
 	 * @param name
-	 * 		name of file
+	 *            name of file
 	 * @param content
-	 * 		content of file
+	 *            content of file
 	 * @param userLogin
-	 * 		user login
-	 * @return
-	 * 		true is file will be saved, otherwise false
+	 *            user login
+	 * @return true is file will be saved, otherwise false
 	 * @throws IOException
 	 */
 	public boolean uploadFile(String name, String content, String userLogin)
@@ -136,11 +134,9 @@ public interface GreetingService extends RemoteService {
 
 	/**
 	 * Getting token to authorization Dropbox connection
-	 * @return
-	 * 		token from database
+	 * 
+	 * @return token from database
 	 */
 	public String getToken();
 
-
-	
 }

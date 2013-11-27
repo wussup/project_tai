@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -23,8 +25,6 @@ import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.util.Factory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
@@ -50,9 +50,9 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	private static final long serialVersionUID = -4051026136441981243L;
 	// private static final String token =
 	// "G0jQojXYSYUAAAAAAAAAAX66jXUpnUeAYfR2nAqaFlI5wwyUYjTDas88VV0oW2Vt";
-	private static final transient Logger log = LoggerFactory
-			.getLogger(GreetingServiceImpl.class);
 
+	private static final Logger log = Logger.getLogger(GreetingService.class.getName());
+	
 	private org.apache.shiro.subject.Subject currentUser;
 	private DbxClient currentClient;
 	private User applicationUser;
@@ -61,6 +61,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	 * Constructor
 	 */
 	public GreetingServiceImpl() {
+		PropertyConfigurator.configure("log4j.conf");
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory
 				.getInstance();

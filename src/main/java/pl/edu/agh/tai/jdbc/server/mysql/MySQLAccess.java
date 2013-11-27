@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
+import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
 
 /**
@@ -17,12 +21,18 @@ import pl.edu.agh.tai.jdbc.client.User;
  */
 public class MySQLAccess {
 
+	private static final Logger log = Logger.getLogger(GreetingService.class
+			.getName());
+	private static String PORT = "3307";
+	
 	private Connection connect = null;
 	private Statement statement = null;
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-	private static String PORT = "3307";
+	public MySQLAccess() {
+		BasicConfigurator.configure();
+	}
 
 	/**
 	 * Find user info by user login from database
@@ -39,23 +49,21 @@ public class MySQLAccess {
 					.executeQuery("select * from TAI.USERS as u where u.login=\'"
 							+ login + "\'");
 
-			if (resultSet.first())
-			{
+			if (resultSet.first()) {
 				String name = resultSet.getString("name");
 				String surname = resultSet.getString("surname");
 				String salt = resultSet.getString("salt");
 				String password = resultSet.getString("password");
 				int type = resultSet.getInt("userType");
 				User user = new User(name, surname, login, password, salt, type);
-	
+
 				return user;
-			}
-			else
+			} else
 				return null;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in getUserByLogin method", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error in getUserByLogin method", e);
 		} finally {
 			close();
 		}
@@ -85,9 +93,9 @@ public class MySQLAccess {
 
 			return true;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in createUser method", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error in createUser method", e);
 		} finally {
 			close();
 		}
@@ -114,9 +122,9 @@ public class MySQLAccess {
 
 			return resultSet.first();
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in login method", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error in login method", e);
 		} finally {
 			close();
 		}
@@ -136,7 +144,7 @@ public class MySQLAccess {
 			return writeResultSet(resultSet);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error in getAllUsers method", e);
 		} finally {
 			close();
 		}
@@ -194,10 +202,10 @@ public class MySQLAccess {
 				connect.close();
 			}
 		} catch (Exception e) {
-
+			log.error("Error in close method", e);
 		}
 	}
-	
+
 	/**
 	 * Getting dropbox token for logging to Dropbox
 	 * 
@@ -219,51 +227,52 @@ public class MySQLAccess {
 			return resultSet.first() ? resultSet.getString("dropbox_token")
 					: null;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in getDropboxToken method", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error in getDropboxToken method", e);
 		} finally {
 			close();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Set new Dropbox token and save it to DB
+	 * 
 	 * @param token
-	 * 		new token
-	 * @return
-	 * 		true if operation done, otherwise false
+	 *            new token
+	 * @return true if operation done, otherwise false
 	 */
 	public boolean setDropboxToken(String token) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-						
+
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:"
 					+ PORT + "/tai?" + "user=root");
-			
+
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
-			ResultSet tokenExist = statement.executeQuery("select * from TAI.SETTINGS");
+			ResultSet tokenExist = statement
+					.executeQuery("select * from TAI.SETTINGS");
 
-			
 			// Result set get the result of the SQL query
-			if (tokenExist.first()){				
-				statement.executeUpdate("update TAI.SETTINGS set dropbox_token=\""+token+"\" WHERE settingId IS NOT NULL");				
-			}
-			else{
+			if (tokenExist.first()) {
+				statement
+						.executeUpdate("update TAI.SETTINGS set dropbox_token=\""
+								+ token + "\" WHERE settingId IS NOT NULL");
+			} else {
 				preparedStatement = connect
 						.prepareStatement("insert into  TAI.SETTINGS(settingId, dropbox_token) values (default, ?)");
 				preparedStatement.setString(1, token);
 				preparedStatement.executeUpdate();
-		
+
 			}
 
 			return true;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in setDropboxToken method", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Error in setDropboxToken method", e);
 		} finally {
 			close();
 		}

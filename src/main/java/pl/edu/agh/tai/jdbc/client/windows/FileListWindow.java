@@ -9,7 +9,6 @@ import pl.edu.agh.tai.jdbc.client.LoginView;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
 import pl.edu.agh.tai.jdbc.shared.Invoice;
 
-import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
@@ -36,18 +35,26 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * window where all files are display in grid
- * @author Kuba
- *
+ * Window where all files are display in grid
+ * 
+ * @since 26.11.2013
+ * @author Jakub Kolodziej&Taras Melon
+ * 
  */
 public class FileListWindow extends Window {
 
-	private Button logoutButton = new Button("Logout", AbstractImagePrototype.create(ImageProvider.INSTANCE.getLogoutIcon()));
+	private Button logoutButton = new Button("Logout",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE
+					.getLogoutIcon()));
 	private Button downloadButton = new Button("Download File",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getFooIcon()));
-	private Button dropboxLinking = new Button("Change Dropbox Linking Account", AbstractImagePrototype.create(ImageProvider.INSTANCE.getDropboxIcon()));
-	private Button addNewUser = new Button ("Add new user", AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
-	private Button createInvoice = new Button ("Create new Invoice", 
+	private Button dropboxLinking = new Button(
+			"Change Dropbox Linking Account",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE
+					.getDropboxIcon()));
+	private Button addNewUser = new Button("Add new user",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
+	private Button createInvoice = new Button("Create new Invoice",
 			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
@@ -56,7 +63,7 @@ public class FileListWindow extends Window {
 	private ListLoader<ListLoadResult<Invoice>> loader;
 	private ListStore<ModelData> itemStore;
 	private RpcProxy<List<Invoice>> proxy;
-	
+
 	/**
 	 * constructor, adding all fields
 	 */
@@ -85,7 +92,6 @@ public class FileListWindow extends Window {
 		itemStore.getLoader().load();
 		grid = new Grid<ModelData>(itemStore, cm);
 		grid.setHeight(205);
-		
 
 		grid.getSelectionModel().addSelectionChangedListener(
 				new SelectionChangedListener<ModelData>() {
@@ -94,13 +100,12 @@ public class FileListWindow extends Window {
 					public void selectionChanged(
 							final SelectionChangedEvent<ModelData> se) {
 						if (type == 0) {
-							boolean isDir = (!se.getSelectedItem().get("name").toString().contains("."));
-							if (isDir)
-							{
+							boolean isDir = (!se.getSelectedItem().get("name")
+									.toString().contains("."));
+							if (isDir) {
 								downloadButton.setVisible(false);
 								grid.getStore().getLoader().load();
-								
-								
+
 							} else {
 								downloadButton.setVisible(true);
 							}
@@ -137,64 +142,68 @@ public class FileListWindow extends Window {
 	}
 
 	private void createProxy(int type) {
-			proxy = new RpcProxy<List<Invoice>>() {
-				@Override
-				protected void load(Object loadConfig,
-						final AsyncCallback<List<Invoice>> callback) {
-					greetingService.getFileList(callback);
-				}
-			};			
+		proxy = new RpcProxy<List<Invoice>>() {
+			@Override
+			protected void load(Object loadConfig,
+					final AsyncCallback<List<Invoice>> callback) {
+				greetingService.getFileList(callback);
+			}
+		};
 	}
 
 	private void createToolbars(int type) {
 		ToolBar toolbar = new ToolBar();
 		ToolBar bottomToolbar = new ToolBar();
 		toolbar.setHeight(25);
-		if (type == 0){
+		if (type == 0) {
 			toolbar.add(createInvoice);
 			bottomToolbar.add(dropboxLinking);
 			FillToolItem item = new FillToolItem();
 			bottomToolbar.add(item);
 			bottomToolbar.add(addNewUser);
-			
-			createInvoice.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-				@Override
-				public void componentSelected(ButtonEvent ce) {
-					try {
-						InvoiceWindow window = new InvoiceWindow();
-						window.show();
-						window.addListener(Events.Hide, new Listener<BaseEvent>() {
+			createInvoice
+					.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-							@Override
-							public void handleEvent(BaseEvent be) {
-								grid.getStore().getLoader().load();							
+						@Override
+						public void componentSelected(ButtonEvent ce) {
+							try {
+								InvoiceWindow window = new InvoiceWindow();
+								window.show();
+								window.addListener(Events.Hide,
+										new Listener<BaseEvent>() {
+
+											@Override
+											public void handleEvent(BaseEvent be) {
+												grid.getStore().getLoader()
+														.load();
+											}
+										});
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-						});
-					} catch (Exception e) {
-						e.printStackTrace();
-					}				
-				}
-			});
-			
-			dropboxLinking.addSelectionListener(new SelectionListener<ButtonEvent>() {
+						}
+					});
 
-				@Override
-				public void componentSelected(ButtonEvent ce) {
-					new AuthorizationWindow().show();					
-				}
-			});
-			
-			addNewUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			dropboxLinking
+					.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-				@Override
-				public void componentSelected(ButtonEvent ce) {
-					new AddUserWindow().show();					
-				}
-				
-			});
-			
-			
+						@Override
+						public void componentSelected(ButtonEvent ce) {
+							new AuthorizationWindow().show();
+						}
+					});
+
+			addNewUser
+					.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+						@Override
+						public void componentSelected(ButtonEvent ce) {
+							new AddUserWindow().show();
+						}
+
+					});
+
 		}
 		FillToolItem item = new FillToolItem();
 		toolbar.add(item);
@@ -225,14 +234,10 @@ public class FileListWindow extends Window {
 						}
 					}
 				});
-		
-		
-		
-		
-		
+
 		setTopComponent(toolbar);
 		setBottomComponent(bottomToolbar);
-		
+
 	}
 
 }

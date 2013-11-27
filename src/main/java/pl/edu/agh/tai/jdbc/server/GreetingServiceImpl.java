@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -23,8 +25,6 @@ import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.util.Factory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.User;
@@ -49,9 +49,9 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
 	private static final long serialVersionUID = -4051026136441981243L;
-	private static final transient Logger log = LoggerFactory
-			.getLogger(GreetingServiceImpl.class);
 
+	private static final Logger log = Logger.getLogger(GreetingService.class
+			.getName());
 	private org.apache.shiro.subject.Subject currentUser;
 	private DbxClient currentClient;
 	private User applicationUser;
@@ -60,6 +60,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	 * Constructor
 	 */
 	public GreetingServiceImpl() {
+		BasicConfigurator.configure();
 		Factory<org.apache.shiro.mgt.SecurityManager> factory = new IniSecurityManagerFactory();
 		org.apache.shiro.mgt.SecurityManager securityManager = factory
 				.getInstance();
@@ -152,7 +153,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		String hashedPasswordBase64 = new Sha256Hash(plainTextPassword, salt,
 				1024).toBase64();
 
-		// TODO pobierac z GUI typ
 		User user = new User(name, surname, login, hashedPasswordBase64,
 				salt.toString(), type);
 		this.createUser(user);
@@ -163,6 +163,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		access.createUser(user);
 		log.info("User with login:" + user.getLogin() + " hashedPassword:"
 				+ user.getPassword() + " salt:" + user.getSalt());
+
 	}
 
 	@Override
@@ -190,29 +191,29 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String logOnDropbox(String code){
-	      
-	      DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(), StaticData.getAPP_SECRET());
+	public String logOnDropbox(String code) {
 
-	      DbxRequestConfig config = new DbxRequestConfig(StaticData.getPROJECT_NAME(),
-	      Locale.getDefault().toString());
-	      DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
-	      DbxAuthFinish authFinish;		
-				try {
-					authFinish = webAuth.finish(code);
-				    DbxClient client = new DbxClient(config, authFinish.accessToken);
-				    MySQLAccess sql = new MySQLAccess();
-				    sql.setDropboxToken(authFinish.accessToken);
-				    currentClient = client;
-			        return ("Linked account:" + client.getAccountInfo().displayName);
-				} catch (DbxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
+		DbxAppInfo appInfo = new DbxAppInfo(StaticData.getAPP_KEY(),
+				StaticData.getAPP_SECRET());
 
-		   return null;
+		DbxRequestConfig config = new DbxRequestConfig(
+				StaticData.getPROJECT_NAME(), Locale.getDefault().toString());
+		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+		DbxAuthFinish authFinish;
+		try {
+			authFinish = webAuth.finish(code);
+			DbxClient client = new DbxClient(config, authFinish.accessToken);
+			MySQLAccess sql = new MySQLAccess();
+			sql.setDropboxToken(authFinish.accessToken);
+			currentClient = client;
+			return ("Linked account:" + client.getAccountInfo().displayName);
+		} catch (DbxException e) {
+			log.error("Error in logOnDropbox method", e);
+		}
+
+		return null;
 	}
-	
+
 	@Override
 	public String logOnDropboxWithoutToken() {
 		DbxRequestConfig config = new DbxRequestConfig(
@@ -222,9 +223,9 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		DbxClient client = new DbxClient(config, token);
 		currentClient = client;
 		try {
-			return ("Linked account:"+ client.getAccountInfo().displayName);
+			return ("Linked account:" + client.getAccountInfo().displayName);
 		} catch (DbxException e) {
-			e.printStackTrace();
+			log.error("Error in logOnDropboxWithouToken method", e);
 		}
 		return null;
 
@@ -238,49 +239,44 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		try {
 			if (applicationUser.getType() == 1)
 				listing = currentClient.getMetadataWithChildren("/"
-					+ applicationUser.getLogin());
-			else 
+						+ applicationUser.getLogin());
+			else
 				listing = currentClient.getMetadataWithChildren("/");
-						
-			
+
 			DbxEntry.WithChildren childrenListing;
-			System.out.println("Files in the root path:");
 			for (DbxEntry child : listing.children) {
-				if (child.isFolder()){
+				if (child.isFolder()) {
 					childrenListing = currentClient.getMetadataWithChildren("/"
 							+ child.name);
-					for  (DbxEntry children : childrenListing.children) {
+					for (DbxEntry children : childrenListing.children) {
 						Invoice inv = new Invoice();
-						inv.setName(children.name + " - file for user - " + child.name);
+						inv.setName(children.name + " - file for user - "
+								+ child.name);
 						result.add(inv);
-						System.out.println("	" + children.name + ": " + children.toString());
-						System.out.println("ŚCIEZKA --->" + children.path);
 					}
 				} else {
 					Invoice invoice = new Invoice();
 					invoice.setName(child.name);
 					result.add(invoice);
-					System.out.println("	" + child.name + ": " + child.toString());
-					System.out.println("ŚCIEZKA --->" + child.path);
 				}
 			}
-			
-			java.util.Collections.sort(result, new Comparator<Invoice>(){
+
+			java.util.Collections.sort(result, new Comparator<Invoice>() {
 
 				@Override
 				public int compare(Invoice arg0, Invoice arg1) {
 					if (applicationUser.getType() == 1)
 						return arg0.getName().compareTo(arg1.getName());
-					else 
-						return arg0.getName().split(" - ")[2].compareTo(arg1.getName().split(" - ")[2]);					
+					else
+						return arg0.getName().split(" - ")[2].compareTo(arg1
+								.getName().split(" - ")[2]);
 				}
-				
+
 			});
 
 			return result;
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error in getFileList method", e);
 		}
 		return null;
 
@@ -290,77 +286,106 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	public boolean downloadFile(String name) {
 		FileOutputStream outputStream = null;
 		try {
-			
+
 			File dir = new File("C:\\invoices");
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
-			
-			outputStream = new FileOutputStream("C:\\invoices\\"+name.split(" - ")[0]);
-			DbxEntry.File downloadedFile;
-			
-			if (name.contains(" - ")){
-			
-			downloadedFile = currentClient.getFile(
-					"/" + name.split(" - ")[2] + "/" + name.split(" - ")[0], null,
-					outputStream);
-			
+
+			outputStream = new FileOutputStream("C:\\invoices\\"
+					+ name.split(" - ")[0]);
+			if (name.contains(" - ")) {
+
+				currentClient
+						.getFile(
+								"/" + name.split(" - ")[2] + "/"
+										+ name.split(" - ")[0], null,
+								outputStream);
+
 			} else {
-				downloadedFile = currentClient.getFile(
-						"/" + applicationUser.getLogin() + "/" + name, null,
-						outputStream);
+				currentClient.getFile("/" + applicationUser.getLogin() + "/"
+						+ name, null, outputStream);
 			}
-//			System.out.println(downloadedFile.Reader.toString());
-			
-			System.out.println("Metadata: " + downloadedFile.toString());
 			return true;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			log.error("Error in downloadFile method", e);
 		} catch (DbxException e) {
-			e.printStackTrace();
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		finally {
+			log.error("Error in downloadFile method", e);
+		} catch (IOException e) {
+			log.error("Error in downloadFile method", e);
+		} finally {
 			try {
 				outputStream.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Error in downloadFile method", e);
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean uploadFile(String name, String content, String userLogin) throws IOException{
+	public boolean uploadFile(String name, String content, String userLogin)
+			throws IOException {
 		try {
-		File file = new File (name+".txt");
-		if (!file.exists()){
-			file.createNewFile();
-		} 
-		
-		FileWriter writer = new FileWriter(file.getName(), true);
-		BufferedWriter bufferWriter = new BufferedWriter(writer);
-		bufferWriter.write(content);
-		bufferWriter.close();
-		
-		FileInputStream uploadFile = new FileInputStream(file);
-		try{			
-			currentClient.uploadFile("/"+userLogin+"/"+name+".txt", DbxWriteMode.force(), file.length(), uploadFile);			
-			return true;
-		} catch (DbxException e){
-			e.printStackTrace();
-			uploadFile.close();
+			File file = new File(name + ".txt");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter writer = new FileWriter(file.getName(), true);
+			BufferedWriter bufferWriter = new BufferedWriter(writer);
+			bufferWriter.write(content);
+			bufferWriter.close();
+
+			FileInputStream uploadFile = new FileInputStream(file);
+			try {
+				currentClient.uploadFile("/" + userLogin + "/" + name + ".txt",
+						DbxWriteMode.force(), file.length(), uploadFile);
+				return true;
+			} catch (DbxException e) {
+				log.error("Error uploadFile method", e);
+				uploadFile.close();
+				return false;
+			}
+		} catch (IOException e) {
+			log.error("Error uploadFile method", e);
 			return false;
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private boolean uploadLogs(String adminLogin, String content)
+			throws IOException {
+		try {
+			String name = "logs.txt";
+			File file = new File(name);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter writer = new FileWriter(file.getName(), true);
+			BufferedWriter bufferWriter = new BufferedWriter(writer);
+			bufferWriter.write(content);
+			bufferWriter.close();
+
+			FileInputStream uploadFile = new FileInputStream(file);
+			try {
+				currentClient.uploadFile("/" + adminLogin + "/" + name,
+						DbxWriteMode.add(), file.length(), uploadFile);
+				return true;
+			} catch (DbxException e) {
+				e.printStackTrace();
+				uploadFile.close();
+				return false;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	@Override
-	public String getToken(){
+	public String getToken() {
 		MySQLAccess sql = new MySQLAccess();
 		return sql.getDropboxToken();
 	}

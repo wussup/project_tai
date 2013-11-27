@@ -211,61 +211,78 @@ public class LoginView implements EntryPoint {
 							WINDOW.hide();
 							Info.display("Success!",
 									"You have successfully logged in!");
-							greetingService.getToken(new AsyncCallback<String>() {
-
-								@Override
-								public void onFailure(Throwable arg0) {
-									// TODO Auto-generated method stub
-									
-								}
-
-								@Override
-								public void onSuccess(String result) {
-									if (result == null){
-										new AuthorizationWindow().show();
-									} else {greetingService.logOnDropboxWithoutToken(new AsyncCallback<String>() {
+							greetingService
+									.getToken(new AsyncCallback<String>() {
 
 										@Override
 										public void onFailure(Throwable caught) {
-											// TODO Auto-generated method stub
-											
+											MessageBox.alert("Error!",
+													caught.getMessage(), null);
 										}
 
 										@Override
 										public void onSuccess(String result) {
-											String[] splitted = result.split(":");
-											Info.display(splitted[0], splitted[1]);
-											greetingService.getApplicationUser(new AsyncCallback<User>() {
+											if (result == null) {
+												new AuthorizationWindow()
+														.show();
+											} else {
+												greetingService
+														.logOnDropboxWithoutToken(new AsyncCallback<String>() {
 
-												@Override
-												public void onFailure(Throwable caught) {
-													// TODO Auto-generated method stub
-													
-												}
+															@Override
+															public void onFailure(
+																	Throwable caught) {
+																MessageBox
+																		.alert("Error!",
+																				caught.getMessage(),
+																				null);
+															}
 
-												@Override
-												public void onSuccess(User result) {
-													FileListWindow fileWindow = new FileListWindow(result.getType());
-													fileWindow.show();											
-													
-												}
-											});
+															@Override
+															public void onSuccess(
+																	String result) {
+																String[] splitted = result
+																		.split(":");
+																Info.display(
+																		splitted[0],
+																		splitted[1]);
+																greetingService
+																		.getApplicationUser(new AsyncCallback<User>() {
+
+																			@Override
+																			public void onFailure(
+																					Throwable caught) {
+																				MessageBox
+																						.alert("Error!",
+																								caught.getMessage(),
+																								null);
+																			}
+
+																			@Override
+																			public void onSuccess(
+																					User result) {
+																				FileListWindow fileWindow = new FileListWindow(
+																						result.getType());
+																				fileWindow
+																						.show();
+
+																			}
+																		});
+															}
+														});
+											}
 										}
+
 									});
-								}
-							}
-							
-						});
-						
 
-					} else {
-						MessageBox.alert("Error!",
-								"Wrong login or password", null);
+						} else {
+							MessageBox.alert("Error!",
+									"Wrong login or password", null);
+						}
 					}
-				}
 
-			});
-}
+				});
+	}
 
 	public void showWindow() {
 		WINDOW.show();

@@ -1,6 +1,5 @@
 package pl.edu.agh.tai.jdbc.client.windows;
 
-
 import pl.edu.agh.tai.jdbc.client.GreetingService;
 import pl.edu.agh.tai.jdbc.client.GreetingServiceAsync;
 import pl.edu.agh.tai.jdbc.shared.ImageProvider;
@@ -22,30 +21,35 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * window where admin can adding new user to application
- * @author Kuba
- *
+ * Window where admin can adding new user to application
+ * 
+ * @since 26.11.2013
+ * @author Taras Melon&Jakub Kolodziej
+ * 
  */
 public class AddUserWindow extends Window {
-	private Button addNewUser = new Button("Add new user", AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
-	private Button close = new Button ("Close", AbstractImagePrototype.create(ImageProvider.INSTANCE.getCloseIcon()));
+	private Button addNewUser = new Button("Add new user",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
+	private Button close = new Button(
+			"Close",
+			AbstractImagePrototype.create(ImageProvider.INSTANCE.getCloseIcon()));
 	private SimpleComboBox<String> typeCombo = new SimpleComboBox<String>();
-	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+	private final GreetingServiceAsync greetingService = GWT
+			.create(GreetingService.class);
 
 	/**
 	 * constructor, adding all fields
 	 */
-	public AddUserWindow(){
-		
+	public AddUserWindow() {
+
 		setLayout(new VBoxLayout(VBoxLayoutAlign.CENTER));
-		
-		
+
 		addButton(close);
 		addButton(addNewUser);
-		
+
 		LabelField surnameLabel = new LabelField();
 		surnameLabel.setValue("New user surname");
-		add (surnameLabel);
+		add(surnameLabel);
 		final TextField<String> surnameField = new TextField<String>();
 		surnameField.setStyleAttribute("padding-right", "5px");
 		surnameField.setStyleAttribute("padding-bottom", "10px");
@@ -53,10 +57,10 @@ public class AddUserWindow extends Window {
 		surnameField.setWidth(150);
 		surnameField.setTitle("New user surname");
 		add(surnameField);
-		
+
 		LabelField nameLabel = new LabelField();
 		nameLabel.setValue("New user name");
-		add (nameLabel);
+		add(nameLabel);
 		final TextField<String> nameField = new TextField<String>();
 		nameField.setStyleAttribute("padding-right", "5px");
 		nameField.setStyleAttribute("padding-bottom", "10px");
@@ -64,10 +68,10 @@ public class AddUserWindow extends Window {
 		nameField.setWidth(150);
 		nameField.setTitle("New user name");
 		add(nameField);
-		
+
 		LabelField label = new LabelField();
 		label.setValue("New user login");
-		add (label);
+		add(label);
 		final TextField<String> loginField = new TextField<String>();
 		loginField.setStyleAttribute("padding-right", "5px");
 		loginField.setStyleAttribute("padding-bottom", "10px");
@@ -75,55 +79,54 @@ public class AddUserWindow extends Window {
 		loginField.setWidth(150);
 		loginField.setTitle("New user login");
 		add(loginField);
-		
+
 		LabelField passwordLabel = new LabelField();
 		passwordLabel.setValue("Password");
-		add (passwordLabel);
+		add(passwordLabel);
 		final TextField<String> passwordField = new TextField<String>();
 		passwordField.setWidth(150);
 		passwordField.setStyleAttribute("padding-right", "5px");
 		passwordField.setStyleAttribute("padding-top", "10px");
 		passwordField.setStyleAttribute("padding-bottom", "10px");
 		add(passwordField);
-		
+
 		typeCombo.add("user");
 		typeCombo.add("admin");
 		LabelField typeLabel = new LabelField();
 		passwordLabel.setValue("Password");
-		add (typeLabel);
+		add(typeLabel);
 		typeCombo.setStyleAttribute("padding-right", "5px");
 		typeCombo.setStyleAttribute("padding-top", "10px");
 		typeCombo.setStyleAttribute("padding-bottom", "10px");
 		add(typeCombo);
-	
+
 		surnameField.setValidator(new Validator() {
-			
+
 			@Override
 			public String validate(Field<?> field, String value) {
-				if (surnameField.getValue() == null){
+				if (surnameField.getValue() == null) {
 					return "Type password";
 				}
 				return null;
 			}
 		});
-		
+
 		nameField.setValidator(new Validator() {
-			
+
 			@Override
 			public String validate(Field<?> field, String value) {
-				if (nameField.getValue() == null){
+				if (nameField.getValue() == null) {
 					return "Type password";
 				}
 				return null;
 			}
 		});
-		
-		
+
 		loginField.setValidator(new Validator() {
-			
+
 			@Override
 			public String validate(Field<?> field, String value) {
-				if (nameField.getValue() == null){
+				if (nameField.getValue() == null) {
 					return "Type login";
 				}
 				return null;
@@ -131,62 +134,69 @@ public class AddUserWindow extends Window {
 		});
 
 		passwordField.setValidator(new Validator() {
-			
+
 			@Override
 			public String validate(Field<?> field, String value) {
-				if (passwordField.getValue() == null){
+				if (passwordField.getValue() == null) {
 					return "Type password";
 				}
 				return null;
 			}
 		});
-	
-		
-			
-		addNewUser.addSelectionListener(new SelectionListener<ButtonEvent>() {			
-					
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						if (nameField.getValue() != null && surnameField.getValue() != null && loginField.getValue() != null && passwordField.getValue() != null && typeCombo.getSimpleValue() != null ){
-							int type = -1;
-							if (typeCombo.getSimpleValue().equals("user")){
-								type = 1;
-							} else if (typeCombo.getSimpleValue().equals("admin")){
-								type = 0;
-							}
-							greetingService.registrate(nameField.getValue(), surnameField.getValue(), loginField.getValue(), passwordField.getValue(), type, new AsyncCallback<Void>() {
-								
+
+		addNewUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				if (nameField.getValue() != null
+						&& surnameField.getValue() != null
+						&& loginField.getValue() != null
+						&& passwordField.getValue() != null
+						&& typeCombo.getSimpleValue() != null) {
+					int type = -1;
+					if (typeCombo.getSimpleValue().equals("user")) {
+						type = 1;
+					} else if (typeCombo.getSimpleValue().equals("admin")) {
+						type = 0;
+					}
+					greetingService.registrate(nameField.getValue(),
+							surnameField.getValue(), loginField.getValue(),
+							passwordField.getValue(), type,
+							new AsyncCallback<Void>() {
+
 								@Override
 								public void onSuccess(Void arg0) {
-									MessageBox.info("Info", "New user: " + surnameField.getValue() + " " + nameField.getValue() + " added properly.", null);
+									MessageBox.info("Info", "New user: "
+											+ surnameField.getValue() + " "
+											+ nameField.getValue()
+											+ " added properly.", null);
 									hide();
-									
+
 								}
-								
+
 								@Override
 								public void onFailure(Throwable arg0) {
-																	
+
 								}
 							});
-						}
-					}
+				}
+			}
 		});
-	
+
 		close.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				hide();				
+				hide();
 			}
 		});
-		
+
 		setWidth(275);
 		setHeight(375);
 		setResizable(false);
 		setClosable(false);
 		setModal(true);
-		
-		
+
 	}
 
 }

@@ -34,7 +34,6 @@ public interface GreetingServiceAsync {
 
 	public void downloadFile(String name, AsyncCallback<Boolean> callback);
 
-
 	public void getUsersNames(AsyncCallback<List<String>> callback);
 
 	void logOnDropboxWithoutToken(AsyncCallback<String> callback);
