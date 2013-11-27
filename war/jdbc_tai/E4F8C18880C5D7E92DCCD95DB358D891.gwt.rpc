@@ -8,6 +8,8 @@ com.google.gwt.i18n.shared.impl.DateRecord, true, true, false, false, com.google
 com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException, true, true, true, true, com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException/3936916533, 3936916533
 com.google.gwt.user.client.rpc.RpcTokenException, true, true, false, false, com.google.gwt.user.client.rpc.RpcTokenException/2345075298, 2345075298
 com.google.gwt.user.client.rpc.XsrfToken, false, false, true, true, com.google.gwt.user.client.rpc.XsrfToken/4254043109, 4254043109
+java.io.IOException, true, true, false, false, java.io.IOException/1159940531, 1159940531
+java.io.UnsupportedEncodingException, true, true, false, false, java.io.UnsupportedEncodingException/1526756933, 1526756933
 java.lang.Boolean, true, true, true, true, java.lang.Boolean/476441737, 476441737
 [Ljava.lang.Boolean;, true, true, false, false, [Ljava.lang.Boolean;/2507200464, 2507200464
 java.lang.Byte, true, true, false, false, java.lang.Byte/1571082439, 1571082439

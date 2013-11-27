@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='pl.edu.agh.tai.jdbc.JDBC_TAI' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/JDBC_TAI/greet" class="pl.edu.agh.tai.jdbc.server.GreetingServiceImpl" />
+
+</module>

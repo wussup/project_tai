@@ -1,2 +1,3 @@
 # Module jdbc_tai
 # RPC service class, partial path of RPC policy file
+pl.edu.agh.tai.jdbc.client.GreetingService, E4F8C18880C5D7E92DCCD95DB358D891.gwt.rpc

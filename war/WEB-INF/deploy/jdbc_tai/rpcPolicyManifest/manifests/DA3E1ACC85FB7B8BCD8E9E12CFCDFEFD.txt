@@ -1,2 +1,0 @@
-serviceClass: pl.edu.agh.tai.jdbc.client.GreetingService
-path: DDF5A8BE3507FD9B160BAC8905F9A1A4.gwt.rpc

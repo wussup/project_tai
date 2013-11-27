@@ -22,7 +22,7 @@ public class MySQLAccess {
 	private java.sql.PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-	private static String PORT = "3306";
+	private static String PORT = "3307";
 
 	/**
 	 * Find user info by user login from database
