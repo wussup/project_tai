@@ -35,18 +35,6 @@ public class DatabaseTests extends TestCase {
 	}
 
 	@Test
-	public void testCreateUser() {
-		User user = new User();
-		user.setLogin("wowa");
-		user.setName("wowa");
-		user.setPassword("wowa");
-		user.setSurname("wowa");
-		user.setSalt("wowa");
-		user.setType(1);
-		assertTrue(sql.createUser(user));
-	}
-
-	@Test
 	public void testLogin() {
 		assertTrue(sql.login("taras", "melon"));
 		assertFalse(sql.login("what", "what"));

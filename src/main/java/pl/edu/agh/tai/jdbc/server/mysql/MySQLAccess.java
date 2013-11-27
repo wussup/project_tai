@@ -39,15 +39,19 @@ public class MySQLAccess {
 					.executeQuery("select * from TAI.USERS as u where u.login=\'"
 							+ login + "\'");
 
-			resultSet.first();
-			String name = resultSet.getString("name");
-			String surname = resultSet.getString("surname");
-			String salt = resultSet.getString("salt");
-			String password = resultSet.getString("password");
-			int type = resultSet.getInt("userType");
-			User user = new User(name, surname, login, password, salt, type);
-
-			return user;
+			if (resultSet.first())
+			{
+				String name = resultSet.getString("name");
+				String surname = resultSet.getString("surname");
+				String salt = resultSet.getString("salt");
+				String password = resultSet.getString("password");
+				int type = resultSet.getInt("userType");
+				User user = new User(name, surname, login, password, salt, type);
+	
+				return user;
+			}
+			else
+				return null;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
