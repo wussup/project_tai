@@ -21,8 +21,8 @@ public interface GreetingServiceAsync {
 
 	public void logout(AsyncCallback<Void> callback);
 
-	public void registrate(String name, String surname, String login,
-			String password, AsyncCallback<Void> callback);
+	void registrate(String name, String surname, String login,
+			String plainTextPassword, int type, AsyncCallback<Void> callback);
 
 	public void getAuthorizationLink(AsyncCallback<String> callback);
 

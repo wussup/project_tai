@@ -142,7 +142,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void registrate(String name, String surname, String login,
-			String plainTextPassword) {
+			String plainTextPassword, int type) {
 		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
 		Object salt = rng.nextBytes();
 
@@ -154,7 +154,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 		// TODO pobierac z GUI typ
 		User user = new User(name, surname, login, hashedPasswordBase64,
-				salt.toString(), 1);
+				salt.toString(), type);
 		this.createUser(user);
 	}
 
