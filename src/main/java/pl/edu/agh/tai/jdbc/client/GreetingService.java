@@ -62,8 +62,9 @@ public interface GreetingService extends RemoteService {
 	 * @param password
 	 *            user password
 	 */
-	public void registrate(String name, String surname, String login,
-			String password);
+
+	void registrate(String name, String surname, String login,
+			String plainTextPassword, int type);
 
 	/**
 	 * Get Dropbox authorization link
@@ -139,6 +140,7 @@ public interface GreetingService extends RemoteService {
 	 * 		token from database
 	 */
 	public String getToken();
+
 
 	
 }

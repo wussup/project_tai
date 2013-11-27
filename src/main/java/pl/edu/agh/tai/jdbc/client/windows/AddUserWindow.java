@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.form.Validator;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
@@ -28,6 +29,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class AddUserWindow extends Window {
 	private Button addNewUser = new Button("Add new user", AbstractImagePrototype.create(ImageProvider.INSTANCE.getPlusIcon()));
 	private Button close = new Button ("Close", AbstractImagePrototype.create(ImageProvider.INSTANCE.getCloseIcon()));
+	private SimpleComboBox<String> typeCombo = new SimpleComboBox<String>();
 	private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
 
 	/**
@@ -84,6 +86,15 @@ public class AddUserWindow extends Window {
 		passwordField.setStyleAttribute("padding-bottom", "10px");
 		add(passwordField);
 		
+		typeCombo.add("user");
+		typeCombo.add("admin");
+		LabelField typeLabel = new LabelField();
+		passwordLabel.setValue("Password");
+		add (typeLabel);
+		typeCombo.setStyleAttribute("padding-right", "5px");
+		typeCombo.setStyleAttribute("padding-top", "10px");
+		typeCombo.setStyleAttribute("padding-bottom", "10px");
+		add(typeCombo);
 	
 		surnameField.setValidator(new Validator() {
 			
@@ -136,8 +147,14 @@ public class AddUserWindow extends Window {
 					
 					@Override
 					public void componentSelected(ButtonEvent ce) {
-						if (nameField.getValue() != null && surnameField.getValue() != null && loginField.getValue() != null && passwordField.getValue() != null){
-							greetingService.registrate(nameField.getValue(), surnameField.getValue(), loginField.getValue(), passwordField.getValue(), new AsyncCallback<Void>() {
+						if (nameField.getValue() != null && surnameField.getValue() != null && loginField.getValue() != null && passwordField.getValue() != null && typeCombo.getSimpleValue() != null ){
+							int type = -1;
+							if (typeCombo.getSimpleValue().equals("user")){
+								type = 1;
+							} else if (typeCombo.getSimpleValue().equals("admin")){
+								type = 0;
+							}
+							greetingService.registrate(nameField.getValue(), surnameField.getValue(), loginField.getValue(), passwordField.getValue(), type, new AsyncCallback<Void>() {
 								
 								@Override
 								public void onSuccess(Void arg0) {
@@ -164,7 +181,7 @@ public class AddUserWindow extends Window {
 		});
 		
 		setWidth(275);
-		setHeight(350);
+		setHeight(375);
 		setResizable(false);
 		setClosable(false);
 		setModal(true);
